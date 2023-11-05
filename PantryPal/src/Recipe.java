@@ -14,4 +14,12 @@ public class Recipe {
     public String getDescription() {
         return this.description;
     }
+
+    public void setTitle(String _title) {
+        title = _title;
+    }
+
+    public void setDescription(String _description) {
+        description = _description;
+    }
 }

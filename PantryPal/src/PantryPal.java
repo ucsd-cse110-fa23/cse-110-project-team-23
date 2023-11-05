@@ -6,6 +6,7 @@ import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import javafx.geometry.*;
 import java.util.*;
+
 /**
  * References:
  * https://stackoverflow.com/questions/55389052/how-to-set-javafx-textfield-to-wrap-text-inside-field
@@ -15,19 +16,39 @@ import java.util.*;
 /**
  * A Recipe in RecipeList (App display)
  */
-class RecipeBox extends HBox{
+class RecipeBox extends HBox {
     private Button title;
     private String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
-    
+
     RecipeBox(String title) {
         this.setPrefSize(500, 50);
 
-        // Set recipe appearance 
+        // Set recipe appearance
         this.title = new Button();
         this.title.setPrefSize(500, 50);
         this.title.setText(title);
         this.title.setStyle(defaultButtonStyle);
         this.getChildren().add(this.title);
+
+        // Creates a new RecipeDetailsView window using selected recipe
+        this.title.setOnAction(e -> {
+            Recipe recipe = getRecipeByTitle(title);
+            if (recipe != null) {
+                RecipeDetailsView recipeDetailsView = new RecipeDetailsView(recipe, this.getScene());
+                Scene recipeDetailsScene = new Scene(recipeDetailsView, 500, 400);
+                Stage stage = (Stage) this.getScene().getWindow();
+                stage.setScene(recipeDetailsScene);
+            }
+        });
+    }
+
+    private Recipe getRecipeByTitle(String title) {
+        for (Recipe recipe : PantryPal.recipeStorage) {
+            if (recipe.getTitle().equals(title)) {
+                return recipe;
+            }
+        }
+        return null;
     }
 }
 
@@ -43,7 +64,7 @@ class RecipeList extends VBox {
     }
 
     // Adds a single recipe to the main list given the title of recipe
-    public void addRecipe(String title){
+    public void addRecipe(String title) {
         this.getChildren().add(0, new RecipeBox(title)); // add new recipe to top of list
     }
 }
@@ -76,7 +97,7 @@ class MainWindowHeader extends HBox {
     public Button getAddButton() {
         return addRecipeButton;
     }
-    
+
 }
 
 /**
@@ -154,15 +175,15 @@ class AddWindowBody extends VBox {
         titleLabel = new Label();
         titleLabel.setText("Title");
         titleLabel.setPrefSize(100, 30);
-        
+
         title = new TextField();
-        title.setPrefSize(400,50);
+        title.setPrefSize(400, 50);
 
         descriptionLabel = new Label();
         descriptionLabel.setText("Description");
 
         description = new TextArea();
-        description.setPrefSize(200,300);
+        description.setPrefSize(200, 300);
 
         this.getChildren().addAll(titleLabel, title, descriptionLabel, description);
     }
@@ -204,13 +225,13 @@ class AddWindowFooter extends HBox {
 /**
  * Add window layout
  */
-class AddWindow extends BorderPane{
+class AddWindow extends BorderPane {
     private AddWindowHeader header;
     private AddWindowBody body;
     private AddWindowFooter footer;
 
-    AddWindow(){
-        header =  new AddWindowHeader();
+    AddWindow() {
+        header = new AddWindowHeader();
         body = new AddWindowBody();
         footer = new AddWindowFooter();
 
@@ -230,11 +251,80 @@ class AddWindow extends BorderPane{
     public AddWindowFooter getAddWindowFooter() {
         return footer;
     }
+}
 
+/**
+ * Footer segment for RecipeViewWindow
+ */
+class RecipeViewFooter extends HBox {
+    private Button saveButton;
+    private Button returnButton;
+
+    RecipeViewFooter() {
+        this.setStyle("-fx-background-color: #F0F8FF;");
+
+        saveButton = new Button();
+        saveButton.setText("Save");
+
+        returnButton = new Button();
+        returnButton.setText("Return");
+
+        this.getChildren().addAll(saveButton, returnButton);
+    }
+
+    public Button getSaveButton() {
+        return saveButton;
+    }
+
+    public Button getReturnButton() {
+        return returnButton;
+    }
+
+}
+
+/**
+ * Recipe details window layout
+ */
+class RecipeDetailsView extends BorderPane {
+    private TextArea descriptionTextArea;
+    private RecipeViewFooter footer;
+
+    RecipeDetailsView(Recipe recipe, Scene previousScene) {
+        footer = new RecipeViewFooter();
+        this.setStyle("-fx-background-color: #F0F8FF;");
+
+        String recipeTitle = recipe.getTitle();
+        Text titleText = new Text(recipeTitle);
+        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
+
+        String recipeDescription = recipe.getDescription();
+        descriptionTextArea = new TextArea(recipeDescription);
+        descriptionTextArea.setPrefSize(400, 300);
+
+        // Return button retrieves current stage and returns to the previous scene
+        // (main)
+        footer.getReturnButton().setOnAction(e -> {
+            Stage stage = (Stage) footer.getReturnButton().getScene().getWindow();
+            stage.setScene(previousScene);
+        });
+
+        this.setTop(titleText);
+        this.setCenter(descriptionTextArea);
+        this.setBottom(footer);
+
+        footer.getSaveButton().setOnAction(e -> {
+            recipe.setDescription(this.getDescription());
+        });
+    }
+
+    public String getDescription() {
+        return descriptionTextArea.getText();
+    }
 }
 
 public class PantryPal extends Application {
     public static List<Recipe> recipeStorage;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Initiate recipe storage
@@ -246,7 +336,7 @@ public class PantryPal extends Application {
 
         // Setting the layout of the AddWindow
         AddWindow addWindow = new AddWindow();
-        Scene addScene = new Scene(addWindow, 500,400);
+        Scene addScene = new Scene(addWindow, 500, 400);
 
         // Set the title of the app
         primaryStage.setTitle("PantryPal");
