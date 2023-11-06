@@ -5,6 +5,8 @@ import javafx.scene.text.*;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import javafx.geometry.*;
+
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -19,6 +21,7 @@ import java.util.*;
 class RecipeBox extends HBox {
     private Button title;
     private String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
+    private Button deleteButton;
 
     RecipeBox(String title) {
         this.setPrefSize(500, 50);
@@ -29,6 +32,24 @@ class RecipeBox extends HBox {
         this.title.setText(title);
         this.title.setStyle(defaultButtonStyle);
         this.getChildren().add(this.title);
+
+        //Set up delete button apperance
+        this.deleteButton = new Button("delete");
+        this.deleteButton.setPrefSize(150, 100);
+
+        //deletes the recipe from the list
+        this.deleteButton.setOnAction(e -> {
+            Recipe Rp = getRecipeByTitle(this.title.getText());
+            PantryPal.recipeStorage.remove(Rp);
+            try {
+                RecipeList List = (RecipeList) getParent();
+                List.getChildren().remove(this);
+            } catch (NullPointerException error) {
+            }
+            ;
+        });
+        //adds the delete button
+        this.getChildren().add(this.deleteButton);
 
         // Creates a new RecipeDetailsView window using selected recipe
         this.title.setOnAction(e -> {
