@@ -33,7 +33,7 @@ sourceSets {
         java.srcDirs += [
             '/home/adsandov/code/cse-110-project-team-23/PantryPal/src/main'
         ]
-        java.srcDirst += [
+        java.srcDirs += [
             '/home/adsandov/code/cse-110-project-team-23/PantryPal/src/test'
         ]
         print(java.srcDirs)   // Clean
