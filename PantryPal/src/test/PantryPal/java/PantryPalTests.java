@@ -1,9 +1,9 @@
-package test.PantryPal;
+package test.PantryPal.java;
 
 import org.junit.jupiter.api.Test;
 
-import main.PantryPal.PantryPal;
-import main.PantryPal.Recipe;
+import main.PantryPal.java.PantryPal;
+import main.PantryPal.java.Recipe;
 
 import org.junit.jupiter.api.BeforeEach;
 
@@ -20,21 +20,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class PantryPalTests {
     @BeforeEach
     void setUp() {
-        PantryPal.recipeStorage = new ArrayList<>();
+        PantryPal.recipeStorage = new ArrayList<Recipe>();
         Recipe Recipe1 = new Recipe("Recipe", "Description");
         PantryPal.recipeStorage.add(Recipe1);
 
-    }
+    }   
 
-    @Tag("slow")
+ 
     @Test
-    public void testDivide() {
+    void testDivide() {
         assertThrows(ArithmeticException.class, () -> {
-            Integer.divideUnsigned(42, 0);
-    });
-}   
+            Integer.divideUnsigned(42, 2);
+        });
+    }   
 
-    @Tag("fast")    
+   
     @Test
     void testAddRecipe() {
         int FirstSize = PantryPal.recipeStorage.size();

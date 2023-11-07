@@ -19,13 +19,17 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.1"
     // This provides the TestEngine to actually run the tests.
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.1"
-    testCompileOnly 'junit:junit:4.12' 
 
 }
-
-test {
-    useJUnitPlatform{
-        includeTags 'fast'
-        excludeTags 'slow'
+sourceSets {
+    test {
+        java.srcDirs += ['<PantryPal/src/main/PantryPal/java/PantryPal.java>'] 
     }
+
+    test {
+        java.srcDirs += ['<PantryPal/src/test/PantryPal/java/PantryPalTests.java>']
+    }
+}
+test {
+    useJUnitPlatform()
 }

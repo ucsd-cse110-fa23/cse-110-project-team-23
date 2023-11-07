@@ -1,4 +1,4 @@
-package main.PantryPal;
+package main.PantryPal.java;
 
 public class Recipe {
     private String title;
