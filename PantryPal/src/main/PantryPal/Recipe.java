@@ -1,3 +1,5 @@
+package main.PantryPal;
+
 public class Recipe {
     private String title;
     private String description;
