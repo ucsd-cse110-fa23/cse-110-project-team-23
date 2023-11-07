@@ -1,3 +1,5 @@
+package main.PantryPal;
+
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -33,11 +35,11 @@ class RecipeBox extends HBox {
         this.title.setStyle(defaultButtonStyle);
         this.getChildren().add(this.title);
 
-        //Set up delete button apperance
+        // Set up delete button apperance
         this.deleteButton = new Button("delete");
         this.deleteButton.setPrefSize(150, 100);
 
-        //deletes the recipe from the list
+        // deletes the recipe from the list
         this.deleteButton.setOnAction(e -> {
             Recipe Rp = getRecipeByTitle(this.title.getText());
             PantryPal.recipeStorage.remove(Rp);
@@ -48,7 +50,7 @@ class RecipeBox extends HBox {
             }
             ;
         });
-        //adds the delete button
+        // adds the delete button
         this.getChildren().add(this.deleteButton);
 
         // Creates a new RecipeDetailsView window using selected recipe
