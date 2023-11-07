@@ -31,10 +31,10 @@ dependencies {
 sourceSets {
     test {
         java.srcDirs += [
-            '/home/adsandov/code/cse-110-project-team-23/PantryPal/src/main'
+            '/home/adsandov/code/cse-110-project-team-23/PantryPal/src/main/PantryPal'
         ]
         java.srcDirs += [
-            '/home/adsandov/code/cse-110-project-team-23/PantryPal/src/test'
+            '/home/adsandov/code/cse-110-project-team-23/PantryPal/src/test/PantryPal'
         ]
         print(java.srcDirs)   // Clean
     }
