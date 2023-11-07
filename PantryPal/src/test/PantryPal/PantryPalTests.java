@@ -26,6 +26,15 @@ public class PantryPalTests {
 
     }
 
+    @Tag("slow")
+    @Test
+    public void testDivide() {
+        assertThrows(ArithmeticException.class, () -> {
+            Integer.divideUnsigned(42, 0);
+    });
+}   
+
+    @Tag("fast")    
     @Test
     void testAddRecipe() {
         int FirstSize = PantryPal.recipeStorage.size();
