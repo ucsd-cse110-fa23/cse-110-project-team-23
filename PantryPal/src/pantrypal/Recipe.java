@@ -1,3 +1,5 @@
+package pantrypal;
+
 public class Recipe {
     private String title;
     private String description;
