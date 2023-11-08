@@ -1,0 +1,14 @@
+{
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "/Users/leo/Desktop/javafxlib/lib/javafx-swt.jar",
+        "/Users/leo/Desktop/javafxlib/lib/javafx.base.jar",
+        "/Users/leo/Desktop/javafxlib/lib/javafx.controls.jar",
+        "/Users/leo/Desktop/javafxlib/lib/javafx.fxml.jar",
+        "/Users/leo/Desktop/javafxlib/lib/javafx.graphics.jar",
+        "/Users/leo/Desktop/javafxlib/lib/javafx.media.jar",
+        "/Users/leo/Desktop/javafxlib/lib/javafx.swing.jar",
+        "/Users/leo/Desktop/javafxlib/lib/javafx.web.jar"
+    ]
+}
