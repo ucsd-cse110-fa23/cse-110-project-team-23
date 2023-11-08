@@ -19,8 +19,8 @@ repositories {
 }
 
 javafx {
-    version = "20"
-    modules = [ 'javafx.controls' ]
+    version = "19"
+    modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.swing', 'javafx.web' ]
 }
 
 dependencies {
