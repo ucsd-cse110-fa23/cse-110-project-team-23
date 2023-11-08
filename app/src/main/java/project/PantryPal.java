@@ -1,6 +1,7 @@
 package project;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.text.*;
@@ -159,6 +160,7 @@ class MainWindow extends BorderPane {
  */
 class AddWindowHeader extends HBox {
     private Button returnButton;
+    private ComboBox<String> mealTypeDropMenu;
 
     AddWindowHeader() {
         // Set header appearance
@@ -174,12 +176,18 @@ class AddWindowHeader extends HBox {
         returnButton = new Button("Return");
         returnButton.setStyle(defaultButtonStyle);
 
-        this.getChildren().add(titleText);
-        this.getChildren().add(returnButton);
+        String meal_types[] = {"Breakfast", "Lunch", "Dinner"};
+        mealTypeDropMenu = new ComboBox<>(FXCollections.observableArrayList(meal_types));
+        mealTypeDropMenu.setStyle(defaultButtonStyle);
+        this.getChildren().addAll(titleText, returnButton, mealTypeDropMenu);
     }
 
     public Button getReturnButton() {
         return returnButton;
+    }
+
+    public String getMealType() {
+        return mealTypeDropMenu.getValue();
     }
 }
 
@@ -372,6 +380,7 @@ public class PantryPal extends Application {
 
         // Link returnButton with its function
         Button returnButton = addWindow.getAddWindowHeader().getReturnButton();
+        AddWindowHeader addWindowHeader = addWindow.getAddWindowHeader();
         AddWindowBody addWindowBody = addWindow.getAddWindowBody();
         returnButton.setOnAction(e -> {
             // Return to main list and clear texts added
@@ -384,7 +393,8 @@ public class PantryPal extends Application {
         completeButton.setOnAction(e -> {
             String title = addWindowBody.getTitle();
             String description = addWindowBody.getDescription();
-            Recipe newRecipe = new Recipe(title, description);
+            String mealType = addWindowHeader.getMealType();
+            Recipe newRecipe = new Recipe(title, description, mealType);
             RecipeList recipeList = mainWindow.getRecipeList();
 
             // Store recipe in storage for view/delete/edit
