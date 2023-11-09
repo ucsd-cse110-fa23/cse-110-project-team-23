@@ -18,10 +18,14 @@ repositories {
     mavenCentral()
 }
 
+
 javafx {
     version = "19"
     modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.swing', 'javafx.web' ]
 }
+
+
+
 
 dependencies {
     // Use JUnit Jupiter for testing.
@@ -32,6 +36,7 @@ dependencies {
 
     implementation 'org.openjfx:javafx-controls:19'
     implementation 'org.openjfx:javafx-fxml:19'
+    implementation 'org.json:json:20171018'
 }
 
 application {

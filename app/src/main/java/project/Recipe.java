@@ -32,9 +32,6 @@ public class Recipe {
     }
 
     public void setMealType(String mealType) {
-        if (mealType.equals("Breakfast") || mealType.equals("Lunch") || mealType.equals("Dinner")) {
-            this.mealType = mealType;
-            return;
-        }
+        this.mealType = mealType;
     }
 }

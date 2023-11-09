@@ -111,9 +111,9 @@ class MainWindowHeader extends HBox {
         this.setAlignment(Pos.CENTER); // Align the text to the Center
 
         // Add Recipe button
-        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
+        // String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
         addRecipeButton = new Button("Add Recipe");
-        addRecipeButton.setStyle(defaultButtonStyle);
+        addRecipeButton.setStyle(getAccessibleHelp());;
 
         this.getChildren().addAll(titleText, addRecipeButton);
     }
@@ -160,7 +160,6 @@ class MainWindow extends BorderPane {
  */
 class AddWindowHeader extends HBox {
     private Button returnButton;
-    private ComboBox<String> mealTypeDropMenu;
 
     AddWindowHeader() {
         // Set header appearance
@@ -172,22 +171,15 @@ class AddWindowHeader extends HBox {
         titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
         this.setAlignment(Pos.CENTER); // Align the text to the Center
 
-        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
+        //String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
         returnButton = new Button("Return");
-        returnButton.setStyle(defaultButtonStyle);
+        returnButton.setStyle(getAccessibleHelp());
 
-        String meal_types[] = {"Breakfast", "Lunch", "Dinner"};
-        mealTypeDropMenu = new ComboBox<>(FXCollections.observableArrayList(meal_types));
-        mealTypeDropMenu.setStyle(defaultButtonStyle);
-        this.getChildren().addAll(titleText, returnButton, mealTypeDropMenu);
+        this.getChildren().addAll(titleText, returnButton);
     }
 
     public Button getReturnButton() {
         return returnButton;
-    }
-
-    public String getMealType() {
-        return mealTypeDropMenu.getValue();
     }
 }
 
@@ -197,6 +189,8 @@ class AddWindowHeader extends HBox {
 class AddWindowBody extends VBox {
     private Label titleLabel;
     private TextField title;
+    private Label mealLabel;
+    private TextField mealType;
     private Label descriptionLabel;
     private TextArea description;
 
@@ -210,17 +204,28 @@ class AddWindowBody extends VBox {
         title = new TextField();
         title.setPrefSize(400, 50);
 
+        mealLabel = new Label();
+        mealLabel.setText("Meal Type");
+        mealLabel.setPrefSize(100, 30);
+
+        mealType = new TextField();
+        mealType.setPrefSize(400, 50);
+
         descriptionLabel = new Label();
         descriptionLabel.setText("Description");
 
         description = new TextArea();
         description.setPrefSize(200, 300);
 
-        this.getChildren().addAll(titleLabel, title, descriptionLabel, description);
+        this.getChildren().addAll(titleLabel, title, mealLabel, mealType, descriptionLabel, description);
     }
 
     public String getTitle() {
         return title.getText();
+    }
+
+    public String getMealType() {
+        return mealType.getText();
     }
 
     public String getDescription() {
@@ -231,7 +236,22 @@ class AddWindowBody extends VBox {
         title.clear();
         description.clear();
     }
+
+    public void setRecipe(String suggestedrecipe){
+        int recipeTitleIdx = suggestedrecipe.indexOf("Recipe Title:");
+        int mealTypeIdx = suggestedrecipe.indexOf("Meal Type:");
+        int recipeInstructionsIdx = suggestedrecipe.indexOf("Recipe Instructions:");
+        String parseTitle = suggestedrecipe.substring(recipeTitleIdx + 14, mealTypeIdx).trim();
+        String parseMealType = suggestedrecipe.substring(mealTypeIdx + 11, recipeInstructionsIdx).trim();
+        String parseInstruction = suggestedrecipe.substring(recipeInstructionsIdx + 21).trim();
+        title.setText(parseTitle);
+        mealType.setText(parseMealType);
+        description.setText(parseInstruction);
+    }
 }
+
+
+
 
 /**
  * Footer segment for AddWindow
@@ -282,6 +302,102 @@ class AddWindow extends BorderPane {
     public AddWindowFooter getAddWindowFooter() {
         return footer;
     }
+}
+
+class PromptWindow extends BorderPane {
+    private PromptWindowHeader header;
+    private PromptWindowBody body;
+
+
+    PromptWindow() {
+        header = new PromptWindowHeader();
+        body = new PromptWindowBody();
+
+
+        this.setTop(header);
+        this.setCenter(body);
+
+    }
+
+    public PromptWindowHeader getPromptWindowHeader() {
+        return header;
+    }
+
+    public PromptWindowBody getPromptWindowBody() {
+        return body;
+    }
+}
+
+class PromptWindowHeader extends HBox {
+    private Button returnButton;
+    private ComboBox<String> mealTypeDropMenu;
+
+    PromptWindowHeader() {
+        // Set header appearance
+        this.setPrefSize(500, 60);
+        this.setStyle("-fx-background-color: #F0F8FF;");
+        this.setSpacing(30);
+
+        Text titleText = new Text("Suggest "); // Text of the Header
+        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
+        this.setAlignment(Pos.CENTER); // Align the text to the Center
+        Label prompt = new Label("include meal type and ingredients");
+        
+        //String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
+        returnButton = new Button("Return");
+        returnButton.setStyle(getAccessibleHelp());
+
+        String meal_types[] = {"Breakfast", "Lunch", "Dinner"};
+        mealTypeDropMenu = new ComboBox<>(FXCollections.observableArrayList(meal_types));
+        mealTypeDropMenu.setStyle(getAccessibleHelp());
+        mealTypeDropMenu.setPromptText("Select meal type");
+        this.getChildren().addAll(titleText,prompt, returnButton, mealTypeDropMenu);
+    }
+
+    public Button getReturnButton() {
+        return returnButton;
+    }
+
+    public String getMealType() {
+        return mealTypeDropMenu.getValue();
+    }
+}
+
+
+class PromptWindowBody extends VBox {
+    private Label ingredientLabel;
+    private TextArea description;
+    private Button suggesButton;
+    PromptWindowBody() {
+        this.setStyle("-fx-background-color: #F0F8FF;");
+        
+
+        ingredientLabel = new Label();
+        ingredientLabel.setText("Ingredient");
+        ingredientLabel.setPrefSize(100,30);
+        ingredientLabel.setPadding(new Insets(20,0,20,20));
+        description = new TextArea();
+        description.setPrefSize(200, 300);
+
+        suggesButton = new Button("generate recipe");
+        suggesButton.setStyle(getAccessibleHelp());
+        suggesButton.setPrefSize(100, 30);
+        this.getChildren().addAll(ingredientLabel, description, suggesButton);
+    }
+
+   
+
+    public String getDescription() {
+        return description.getText();
+    }
+    public Button getSuggestButton(){
+        return suggesButton;
+    }
+    public void clear() {
+        description.clear();
+    }
+
+    
 }
 
 /**
@@ -355,20 +471,22 @@ class RecipeDetailsView extends BorderPane {
 
 public class PantryPal extends Application {
     public static List<Recipe> recipeStorage;
-
+    public String suggestedrecipe;
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage)  throws Exception,IOException, InterruptedException{
         // Initiate recipe storage
         recipeStorage = new ArrayList<>();
 
         // Setting the layout of the MainWindow
         MainWindow mainWindow = new MainWindow();
-        Scene mainScene = new Scene(mainWindow, 500, 400);
-
+        Scene mainScene = new Scene(mainWindow, 600, 500);
+        
         // Setting the layout of the AddWindow
-        AddWindow addWindow = new AddWindow();
-        Scene addScene = new Scene(addWindow, 500, 400);
+        PromptWindow promptWindow = new PromptWindow();
+        Scene promptScene = new Scene(promptWindow, 600, 400);
 
+        AddWindow addWindow = new AddWindow();
+        Scene addScene =  new Scene(addWindow, 600,400);
         // Set the title of the app
         primaryStage.setTitle("PantryPal");
         // Create scene of mentioned size with the border pane
@@ -376,13 +494,37 @@ public class PantryPal extends Application {
 
         // Link addRecipeButton with its function
         Button addRecipeButton = mainWindow.getHeader().getAddButton();
-        addRecipeButton.setOnAction(e -> primaryStage.setScene(addScene));
+        addRecipeButton.setOnAction(e -> primaryStage.setScene(promptScene));
+
+        // generate recipe button
+        Button suggestButton = promptWindow.getPromptWindowBody().getSuggestButton();
+        suggestButton.setOnAction(e -> {
+            try{
+                ChatAPI instruction = new ChatAPI(promptWindow.getPromptWindowBody().getDescription());
+                suggestedrecipe = instruction.suggestRecipe();
+                primaryStage.setScene(addScene);
+                promptWindow.getPromptWindowBody().clear();
+                addWindow.getAddWindowBody().setRecipe(suggestedrecipe);
+            }catch(Exception ex){
+
+            }
+        });
 
         // Link returnButton with its function
-        Button returnButton = addWindow.getAddWindowHeader().getReturnButton();
+        Button suggestReturnButton = promptWindow.getPromptWindowHeader().getReturnButton();
+        PromptWindowBody promptWindowBody = promptWindow.getPromptWindowBody();
+        suggestReturnButton.setOnAction(e -> {
+            // Return to main list and clear texts added
+            promptWindowBody.clear();
+            primaryStage.setScene(mainScene);
+        });
+        
+
+        // Link returnButton with its function
+        Button addReturnButton = addWindow.getAddWindowHeader().getReturnButton();
         AddWindowHeader addWindowHeader = addWindow.getAddWindowHeader();
         AddWindowBody addWindowBody = addWindow.getAddWindowBody();
-        returnButton.setOnAction(e -> {
+        addReturnButton.setOnAction(e -> {
             // Return to main list and clear texts added
             addWindowBody.clear();
             primaryStage.setScene(mainScene);
@@ -393,7 +535,7 @@ public class PantryPal extends Application {
         completeButton.setOnAction(e -> {
             String title = addWindowBody.getTitle();
             String description = addWindowBody.getDescription();
-            String mealType = addWindowHeader.getMealType();
+            String mealType = addWindowBody.getMealType();
             Recipe newRecipe = new Recipe(title, description, mealType);
             RecipeList recipeList = mainWindow.getRecipeList();
 
