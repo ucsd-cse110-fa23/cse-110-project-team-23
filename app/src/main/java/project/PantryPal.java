@@ -8,6 +8,8 @@ import javafx.scene.text.*;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import javafx.geometry.*;
+import javax.sound.sampled.*;
+import java.io.*;
 
 import java.io.IOException;
 import java.util.*;
@@ -36,11 +38,11 @@ class RecipeBox extends HBox {
         this.title.setStyle(defaultButtonStyle);
         this.getChildren().add(this.title);
 
-        //Set up delete button apperance
+        // Set up delete button apperance
         this.deleteButton = new Button("delete");
         this.deleteButton.setPrefSize(150, 100);
 
-        //deletes the recipe from the list
+        // deletes the recipe from the list
         this.deleteButton.setOnAction(e -> {
             Recipe Rp = getRecipeByTitle(this.title.getText());
             PantryPal.recipeStorage.remove(Rp);
@@ -51,7 +53,7 @@ class RecipeBox extends HBox {
             }
             ;
         });
-        //adds the delete button
+        // adds the delete button
         this.getChildren().add(this.deleteButton);
 
         // Creates a new RecipeDetailsView window using selected recipe
@@ -156,6 +158,186 @@ class MainWindow extends BorderPane {
 }
 
 /**
+ * Header segment for SuggestWindow
+ */
+class SuggestWindowHeader extends HBox {
+    private Button returnButton;
+    private Button recordIngredientsButton;
+    private Label recordingLabel;
+    private AudioFormat audioFormat;
+    private TargetDataLine targetDataLine;
+    private boolean recording = false;
+
+    SuggestWindowHeader() {
+        // Set header appearance
+        this.setPrefSize(500, 60);
+        this.setStyle("-fx-background-color: #F0F8FF;");
+        this.setSpacing(30);
+
+        Text titleText = new Text("Generate Recipe"); // Text of the Header
+        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
+        this.setAlignment(Pos.CENTER); // Align the text to the Center
+
+        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
+        String defaultLabelStyle = "-fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px; -fx-text-fill: red; visibility: hidden";
+
+        returnButton = new Button("Return");
+        returnButton.setStyle(defaultButtonStyle);
+
+        recordIngredientsButton = new Button("Record Ingredients");
+        recordIngredientsButton.setStyle(defaultButtonStyle);
+
+        recordingLabel = new Label("Recording...");
+        recordingLabel.setStyle(defaultLabelStyle);
+
+        recordIngredientsButton.setOnAction(e -> {
+            if (!recording) {
+                recording = true;
+                recordIngredientsButton.setText("Stop");
+                startRecording();
+            } else {
+                recording = false;
+                recordIngredientsButton.setText("Record Ingredients");
+                stopRecording();
+            }
+        });
+
+        this.getChildren().addAll(titleText, returnButton, recordIngredientsButton);
+
+        audioFormat = getAudioFormat();
+    }
+
+    private AudioFormat getAudioFormat() {
+        // the number of samples of audio per second.
+        // 44100 represents the typical sample rate for CD-quality audio.
+        float sampleRate = 44100;
+
+        // the number of bits in each sample of a sound that has been digitized.
+        int sampleSizeInBits = 16;
+
+        // the number of audio channels in this format (1 for mono, 2 for stereo).
+        int channels = 2;
+
+        // whether the data is signed or unsigned.
+        boolean signed = true;
+
+        // whether the audio data is stored in big-endian or little-endian order.
+        boolean bigEndian = false;
+
+        return new AudioFormat(
+                sampleRate,
+                sampleSizeInBits,
+                channels,
+                signed,
+                bigEndian);
+    }
+
+    private void startRecording() {
+        Thread t = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            // the format of the TargetDataLine
+                            DataLine.Info dataLineInfo = new DataLine.Info(
+                                    TargetDataLine.class,
+                                    audioFormat);
+                            // the TargetDataLine used to capture audio data from the microphone
+                            targetDataLine = (TargetDataLine) AudioSystem.getLine(dataLineInfo);
+                            targetDataLine.open(audioFormat);
+                            targetDataLine.start();
+                            recordingLabel.setVisible(true);
+
+                            // the AudioInputStream that will be used to write the audio data to a file
+                            AudioInputStream audioInputStream = new AudioInputStream(
+                                    targetDataLine);
+
+                            // the file that will contain the audio data
+                            File audioFile = new File("recording.wav");
+                            AudioSystem.write(
+                                    audioInputStream,
+                                    AudioFileFormat.Type.WAVE,
+                                    audioFile);
+                            recordingLabel.setVisible(false);
+                            Thread.sleep(5 * 1000);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                });
+
+        t.start();
+    }
+
+    private void stopRecording() {
+        targetDataLine.stop();
+        targetDataLine.close();
+    }
+
+    public Button getReturnButton() {
+        return returnButton;
+    }
+
+    public Button getRecordIngredientsButton() {
+        return recordIngredientsButton;
+    }
+}
+
+/**
+ * Center segment for SuggestWindow
+ */
+class SuggestWindowBody extends VBox {
+    private Label ingredientLabel;
+    private TextField ingredientTextField;
+
+    SuggestWindowBody() {
+        this.setStyle("-fx-background-color: #F0F8FF;");
+
+        ingredientLabel = new Label();
+        ingredientLabel.setText("Ingredients");
+        ingredientLabel.setPrefSize(100, 30);
+
+        ingredientTextField = new TextField();
+        ingredientTextField.setPrefSize(400, 50);
+
+        this.getChildren().addAll(ingredientLabel, ingredientTextField);
+    }
+
+    public String getIngredients() {
+        return ingredientTextField.getText();
+    }
+
+    public void clear() {
+        ingredientTextField.clear();
+    }
+}
+
+/**
+ * Suggest window layout
+ */
+class SuggestWindow extends BorderPane {
+    private SuggestWindowHeader header;
+    private SuggestWindowBody body;
+
+    SuggestWindow() {
+        header = new SuggestWindowHeader();
+        body = new SuggestWindowBody();
+
+        this.setTop(header);
+        this.setCenter(body);
+        // Add other components for the footer as needed.
+    }
+
+    public SuggestWindowHeader getSuggestWindowHeader() {
+        return header;
+    }
+
+    public SuggestWindowBody getSuggestWindowBody() {
+        return body;
+    }
+}
+
+/**
  * Header segment for AddWindow
  */
 class AddWindowHeader extends HBox {
@@ -176,7 +358,7 @@ class AddWindowHeader extends HBox {
         returnButton = new Button("Return");
         returnButton.setStyle(defaultButtonStyle);
 
-        String meal_types[] = {"Breakfast", "Lunch", "Dinner"};
+        String meal_types[] = { "Breakfast", "Lunch", "Dinner" };
         mealTypeDropMenu = new ComboBox<>(FXCollections.observableArrayList(meal_types));
         mealTypeDropMenu.setStyle(defaultButtonStyle);
         this.getChildren().addAll(titleText, returnButton, mealTypeDropMenu);
@@ -369,6 +551,10 @@ public class PantryPal extends Application {
         AddWindow addWindow = new AddWindow();
         Scene addScene = new Scene(addWindow, 500, 400);
 
+        // Setting the layout of the SuggestWindow
+        SuggestWindow suggestWindow = new SuggestWindow();
+        Scene suggestScene = new Scene(suggestWindow, 500, 400);
+
         // Set the title of the app
         primaryStage.setTitle("PantryPal");
         // Create scene of mentioned size with the border pane
@@ -376,7 +562,7 @@ public class PantryPal extends Application {
 
         // Link addRecipeButton with its function
         Button addRecipeButton = mainWindow.getHeader().getAddButton();
-        addRecipeButton.setOnAction(e -> primaryStage.setScene(addScene));
+        addRecipeButton.setOnAction(e -> primaryStage.setScene(suggestScene));
 
         // Link returnButton with its function
         Button returnButton = addWindow.getAddWindowHeader().getReturnButton();
@@ -387,6 +573,10 @@ public class PantryPal extends Application {
             addWindowBody.clear();
             primaryStage.setScene(mainScene);
         });
+
+        // Link returnButton in SuggestWindow with its function
+        Button returnSuggestButton = suggestWindow.getSuggestWindowHeader().getReturnButton();
+        returnSuggestButton.setOnAction(e -> primaryStage.setScene(mainScene));
 
         // Link completeButton with its function
         Button completeButton = addWindow.getAddWindowFooter().getCompleteButton();
