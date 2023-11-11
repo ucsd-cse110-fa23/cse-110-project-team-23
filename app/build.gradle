@@ -32,6 +32,7 @@ dependencies {
 
     implementation 'org.openjfx:javafx-controls:19'
     implementation 'org.openjfx:javafx-fxml:19'
+    implementation 'org.json:json:20171018'
 }
 
 application {
