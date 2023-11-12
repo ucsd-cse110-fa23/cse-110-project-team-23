@@ -243,10 +243,21 @@ class SuggestWindowBody extends VBox {
 
         confirmButton.setStyle(defaultButtonStyle);
         confirmButton.setOnAction(e -> {
-            if (ingredientLabel.getText() == "") {
-                emptyLabel.setVisible(true);
+            if (recording) {
+                recording = false;
+                recordIngredientsButton.setText("Record Ingredients");
+                stopRecording();
+                recordingLabel.setVisible(false);
             }
-            System.out.println("Ingredients Confirmed!");
+
+            String ingredients = ingredientTextField.getText();
+            try {
+                ChatAPI chatAPI = new ChatAPI(ingredients);
+                String suggestion = chatAPI.suggestRecipe();
+                System.out.println("Generated Recipe Suggestion:\n" + suggestion);
+            } catch (IOException | InterruptedException ex) {
+                ex.printStackTrace();
+            }
         });
 
         // Add buttons to the layout
