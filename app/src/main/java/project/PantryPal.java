@@ -194,15 +194,13 @@ class SuggestWindowBody extends VBox {
     private Label ingredientLabel;
     private TextField ingredientTextField;
     private Button recordIngredientsButton;
+    private Button confirmButton;
     private Label recordingLabel;
+    private Label emptyLabel;
     private AudioFormat audioFormat;
     private TargetDataLine targetDataLine;
     private boolean recording = false;
 
-    // Whisper API setup
-    private static final String API_ENDPOINT = "https://api.openai.com/v1/audio/transcriptions";
-    private static final String TOKEN = "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";
-    private static final String MODEL = "whisper-1";
     private static final String FILE_PATH = "/home/adsandov/code/pantrypal/cse-110-project-team-23/app/recording.wav";
 
     SuggestWindowBody() {
@@ -216,11 +214,16 @@ class SuggestWindowBody extends VBox {
         ingredientTextField.setPrefSize(400, 50);
 
         recordIngredientsButton = new Button("Record Ingredients");
+        confirmButton = new Button("Confirm Ingredients");
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF; -fx-font-weight: bold; -fx-font: 11 arial;";
         recordIngredientsButton.setStyle(defaultButtonStyle);
 
         recordingLabel = new Label("Recording...");
         recordingLabel.setStyle(
+                "-fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px; -fx-text-fill: red; visibility: hidden");
+
+        emptyLabel = new Label("Please Record or Type Ingredients");
+        emptyLabel.setStyle(
                 "-fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px; -fx-text-fill: red; visibility: hidden");
 
         recordIngredientsButton.setOnAction(e -> {
@@ -233,13 +236,27 @@ class SuggestWindowBody extends VBox {
                 recordIngredientsButton.setText("Record Ingredients");
                 stopRecording();
                 ingredientTextField.setText("transcribing...");
-                transcribeAudio();
+                WhisperAPI whisper = new WhisperAPI(FILE_PATH, ingredientTextField);
+                whisper.transcribeAudio();
             }
         });
 
+        confirmButton.setStyle(defaultButtonStyle);
+        confirmButton.setOnAction(e -> {
+            if (ingredientLabel.getText() == "") {
+                emptyLabel.setVisible(true);
+            }
+            System.out.println("Ingredients Confirmed!");
+        });
+
+        // Add buttons to the layout
+        HBox buttonBox = new HBox(recordIngredientsButton, confirmButton);
+        buttonBox.setSpacing(10);
+
         audioFormat = getAudioFormat();
 
-        this.getChildren().addAll(ingredientLabel, ingredientTextField, recordIngredientsButton, recordingLabel);
+        this.getChildren().addAll(ingredientLabel, ingredientTextField, buttonBox,
+                recordingLabel);
     }
 
     public String getIngredients() {
@@ -290,6 +307,7 @@ class SuggestWindowBody extends VBox {
                             targetDataLine.open(audioFormat);
                             targetDataLine.start();
                             recordingLabel.setVisible(true);
+                            emptyLabel.setVisible(false);
 
                             // the AudioInputStream that will be used to write the audio data to a file
                             AudioInputStream audioInputStream = new AudioInputStream(
@@ -317,122 +335,6 @@ class SuggestWindowBody extends VBox {
         targetDataLine.close();
     }
 
-    private void transcribeAudio() {
-        Thread t = new Thread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            // Create file object from file path
-                            File audioFile = new File(FILE_PATH);
-
-                            // Set up HTTP connection
-                            URL url = new URI(API_ENDPOINT).toURL();
-                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                            connection.setRequestMethod("POST");
-                            connection.setDoOutput(true);
-
-                            // Set up request headers
-                            String boundary = "Boundary-" + System.currentTimeMillis();
-                            connection.setRequestProperty(
-                                    "Content-Type",
-                                    "multipart/form-data; boundary=" + boundary);
-                            connection.setRequestProperty("Authorization", "Bearer " + TOKEN);
-
-                            // Set up output stream to write request body
-                            OutputStream outputStream = connection.getOutputStream();
-
-                            // Write model parameter to request body
-                            writeParameterToOutputStream(outputStream, "model", MODEL, boundary);
-
-                            // Write file parameter to request body
-                            writeFileToOutputStream(outputStream, audioFile, boundary);
-
-                            // Write closing boundary to request body
-                            outputStream.write(("\r\n--" + boundary + "--\r\n").getBytes());
-
-                            // Flush and close output stream
-                            outputStream.flush();
-                            outputStream.close();
-
-                            // Get response code
-                            int responseCode = connection.getResponseCode();
-
-                            // Check response code and handle response accordingly
-                            if (responseCode == HttpURLConnection.HTTP_OK) {
-                                handleSuccessResponse(connection);
-                            } else {
-                                handleErrorResponse(connection);
-                            }
-
-                            // Disconnect connection
-                            connection.disconnect();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-        t.start();
-    }
-
-    // Helper method to write a parameter to the output stream in multipart form
-    // data format
-    private static void writeParameterToOutputStream(
-            OutputStream outputStream,
-            String parameterName,
-            String parameterValue,
-            String boundary) throws IOException {
-        outputStream.write(("--" + boundary + "\r\n").getBytes());
-        outputStream.write(
-                ("Content-Disposition: form-data; name=\"" + parameterName + "\"\r\n\r\n").getBytes());
-        outputStream.write((parameterValue + "\r\n").getBytes());
-    }
-
-    // Helper method to write a file to the output stream in multipart form data
-    // format
-    private static void writeFileToOutputStream(
-            OutputStream outputStream,
-            File file,
-            String boundary) throws IOException {
-        outputStream.write(("--" + boundary + "\r\n").getBytes());
-        outputStream.write(
-                ("Content-Disposition: form-data; name=\"file\"; filename=\"" +
-                        file.getName() +
-                        "\"\r\n").getBytes());
-        outputStream.write(("Content-Type: audio/mpeg\r\n\r\n").getBytes());
-
-        FileInputStream fileInputStream = new FileInputStream(file);
-        byte[] buffer = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-            outputStream.write(buffer, 0, bytesRead);
-        }
-        fileInputStream.close();
-    }
-
-    private void handleSuccessResponse(HttpURLConnection connection)
-            throws IOException, JSONException {
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(connection.getInputStream()));
-        String inputLine;
-        StringBuilder response = new StringBuilder();
-        while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
-        }
-        in.close();
-
-        JSONObject responseJson = new JSONObject(response.toString());
-
-        String transcribedText = responseJson.getString("text");
-
-        // update text field
-        ingredientTextField.setText(transcribedText);
-    }
-
-    private void handleErrorResponse(HttpURLConnection connection)
-            throws IOException, JSONException {
-        // Handle error response as needed
-    }
 }
 
 /**
