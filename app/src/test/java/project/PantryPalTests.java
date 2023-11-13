@@ -2,6 +2,7 @@ package project;
 
 import org.junit.jupiter.api.Test;
 
+import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -115,7 +116,8 @@ public class PantryPalTests {
 
     @Test
     void testTranscribeAudio() throws InterruptedException {
-        new JFXPanel();
+        Platform.startup(() -> {
+        });
         TextField textField = new TextField();
 
         WhisperAPI whisperAPI = new WhisperAPI(AUDIO_FILE_PATH, textField);
