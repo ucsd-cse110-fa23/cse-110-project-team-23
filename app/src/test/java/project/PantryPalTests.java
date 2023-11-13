@@ -34,11 +34,6 @@ public class PantryPalTests {
         PantryPal.recipeStorage.add(testRecipe);
     }
 
-    @BeforeAll
-    static void initJavaFX() {
-        new JFXPanel();
-    }
-
     @Test
     void testAddRecipe() {
         boolean recipeAdded = false;
@@ -120,6 +115,7 @@ public class PantryPalTests {
 
     @Test
     void testTranscribeAudio() throws InterruptedException {
+        new JFXPanel();
         TextField textField = new TextField();
 
         WhisperAPI whisperAPI = new WhisperAPI(AUDIO_FILE_PATH, textField);
