@@ -102,6 +102,7 @@ class RecipeList extends VBox {
 class MainWindowHeader extends HBox {
 
     private Button addRecipeButton;
+    private Button restoreRecipes;
 
     MainWindowHeader() {
         // Set Header appearance
@@ -118,7 +119,11 @@ class MainWindowHeader extends HBox {
         addRecipeButton = new Button("Add Recipe");
         addRecipeButton.setStyle(defaultButtonStyle);
 
+        restoreRecipes = new Button ("Restore recipes");
+        restoreRecipes.setStyle(defaultButtonStyle);
+
         this.getChildren().addAll(titleText, addRecipeButton);
+        //this.getChildren().add(restoreRecipes);
     }
 
     public Button getAddButton() {
@@ -129,6 +134,9 @@ class MainWindowHeader extends HBox {
         return addRecipeButton;
     }
 
+    public Button getRestoreButton() {
+        return restoreRecipes;
+    }
 }
 
 /**
@@ -204,7 +212,7 @@ class SuggestWindowBody extends VBox {
     private TargetDataLine targetDataLine;
     private boolean recording = false;
 
-    private static final String FILE_PATH = "/home/adsandov/code/pantrypal/cse-110-project-team-23/app/recording.wav";
+    private static final String AUDIO_FILE_PATH = "recording.wav";
 
     SuggestWindowBody() {
         this.setStyle("-fx-background-color: #F0F8FF;");
@@ -239,7 +247,7 @@ class SuggestWindowBody extends VBox {
                 recordIngredientsButton.setText("Record Ingredients");
                 stopRecording();
                 ingredientTextField.setText("transcribing...");
-                WhisperAPI whisper = new WhisperAPI(FILE_PATH, ingredientTextField);
+                WhisperAPI whisper = new WhisperAPI(AUDIO_FILE_PATH, ingredientTextField);
                 whisper.transcribeAudio();
             }
         });
@@ -368,7 +376,6 @@ class SuggestWindow extends BorderPane {
  */
 class AddWindowHeader extends HBox {
     private Button returnButton;
-    private ComboBox<String> mealTypeDropMenu;
 
     AddWindowHeader() {
         // Set header appearance
@@ -383,19 +390,11 @@ class AddWindowHeader extends HBox {
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
         returnButton = new Button("Return");
         returnButton.setStyle(defaultButtonStyle);
-
-        String meal_types[] = { "Breakfast", "Lunch", "Dinner" };
-        mealTypeDropMenu = new ComboBox<>(FXCollections.observableArrayList(meal_types));
-        mealTypeDropMenu.setStyle(defaultButtonStyle);
-        this.getChildren().addAll(titleText, returnButton, mealTypeDropMenu);
+        this.getChildren().addAll(titleText, returnButton);
     }
 
     public Button getReturnButton() {
         return returnButton;
-    }
-
-    public String getMealType() {
-        return mealTypeDropMenu.getValue();
     }
 }
 
@@ -405,18 +404,25 @@ class AddWindowHeader extends HBox {
 class AddWindowBody extends VBox {
     private Label titleLabel;
     private TextField title;
+    private Label mealLabel;
+    private TextField mealType;
     private Label descriptionLabel;
     private TextArea description;
 
     AddWindowBody() {
         this.setStyle("-fx-background-color: #F0F8FF;");
-
         titleLabel = new Label();
         titleLabel.setText("Title");
         titleLabel.setPrefSize(100, 30);
-
         title = new TextField();
         title.setPrefSize(400, 50);
+
+        mealLabel = new Label();
+        mealLabel.setText("Meal Type");
+        mealLabel.setPrefSize(100, 30);
+
+        mealType = new TextField();
+        mealType.setPrefSize(400, 50);
 
         descriptionLabel = new Label();
         descriptionLabel.setText("Description");
@@ -424,20 +430,35 @@ class AddWindowBody extends VBox {
         description = new TextArea();
         description.setPrefSize(200, 300);
 
-        this.getChildren().addAll(titleLabel, title, descriptionLabel, description);
+        this.getChildren().addAll(titleLabel, title, mealLabel, mealType, descriptionLabel, description);
     }
 
     public String getTitle() {
         return title.getText();
     }
 
+    public String getMealType() {
+        return mealType.getText();
+    }
+
     public String getDescription() {
         return description.getText();
     }
-
     public void clear() {
         title.clear();
         description.clear();
+    }
+
+    public void setRecipe(String suggestedrecipe){
+        int recipeTitleIdx = suggestedrecipe.indexOf("Recipe Title:");
+        int mealTypeIdx = suggestedrecipe.indexOf("Meal Type:");
+        int recipeInstructionsIdx = suggestedrecipe.indexOf("Recipe Instructions:");
+        String parseTitle = suggestedrecipe.substring(recipeTitleIdx + 14, mealTypeIdx).trim();
+        String parseMealType = suggestedrecipe.substring(mealTypeIdx + 11, recipeInstructionsIdx).trim();
+        String parseInstruction = suggestedrecipe.substring(recipeInstructionsIdx + 21).trim();
+        title.setText(parseTitle);
+        mealType.setText(parseMealType);
+        description.setText(parseInstruction);
     }
 }
 
@@ -566,12 +587,13 @@ class RecipeDetailsView extends BorderPane {
 
 public class PantryPal extends Application {
     public static List<Recipe> recipeStorage;
+    public boolean start = true;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Initiate recipe storage
         recipeStorage = new ArrayList<>();
-
+        File storageCSV = new File("recipes.csv");
         // Setting the layout of the MainWindow
         MainWindow mainWindow = new MainWindow();
         Scene mainScene = new Scene(mainWindow, 500, 400);
@@ -588,21 +610,12 @@ public class PantryPal extends Application {
 
         Button confirmButton = suggestWindowBody.getConfirmButton();
         confirmButton.setOnAction(e -> {
-            String ingredients = suggestWindowBody.getIngredients();
-
             try {
-                ChatAPI chatAPI = new ChatAPI(ingredients);
-                String suggestion = chatAPI.suggestRecipe();
-                String title = suggestion.split("\n")[2];
-                Recipe suggestRecipe = new Recipe(title, suggestion, "Breakfast");
-                PantryPal.recipeStorage.add(suggestRecipe);
-                RecipeDetailsView recipeView = new RecipeDetailsView(suggestRecipe, mainScene);
-                Scene recipeScene = new Scene(recipeView, 500, 400);
-                Stage stage = (Stage) confirmButton.getScene().getWindow();
-                RecipeBox suggestedRB = new RecipeBox(title);
-                mainWindow.getRecipeList().getChildren().add(0, suggestedRB);
-                stage.setScene(recipeScene);
-                // System.out.println("Generated Recipe Suggestion:\n" + suggestion);
+                ChatAPI instruction = new ChatAPI(suggestWindow.getSuggestWindowBody().getIngredients());
+                String suggestedrecipe = instruction.suggestRecipe();
+                primaryStage.setScene(addScene);
+                suggestWindow.getSuggestWindowBody().clear();
+                addWindow.getAddWindowBody().setRecipe(suggestedrecipe);
             } catch (IOException | InterruptedException ex) {
                 ex.printStackTrace();
             }
@@ -618,7 +631,6 @@ public class PantryPal extends Application {
 
         // Link returnButton with its function
         Button returnButton = addWindow.getAddWindowHeader().getReturnButton();
-        AddWindowHeader addWindowHeader = addWindow.getAddWindowHeader();
         AddWindowBody addWindowBody = addWindow.getAddWindowBody();
         returnButton.setOnAction(e -> {
             // Return to main list and clear texts added
@@ -635,13 +647,14 @@ public class PantryPal extends Application {
         completeButton.setOnAction(e -> {
             String title = addWindowBody.getTitle();
             String description = addWindowBody.getDescription();
-            String mealType = addWindowHeader.getMealType();
+            String mealType = addWindowBody.getMealType();
             Recipe newRecipe = new Recipe(title, description, mealType);
             RecipeList recipeList = mainWindow.getRecipeList();
 
             // Store recipe in storage for view/delete/edit
             recipeStorage.add(newRecipe);
             recipeList.addRecipe(title);
+
 
             // Clear text in addWindow
             addWindowBody.clear();
@@ -650,9 +663,64 @@ public class PantryPal extends Application {
             primaryStage.setScene(mainScene);
         });
 
+
+        //Button restoreButton = mainWindow.getHeader().getRestoreButton();
+        primaryStage.setOnShown(e -> {
+            if (start) {
+                try {
+                    FileReader csvReader = new FileReader(storageCSV);
+                    int curr = 0;
+                    String file = "";
+                    while(curr != -1) {
+                        file += (char) curr;
+                        curr = csvReader.read();
+                    }
+                    csvReader.close();
+                    file = file.substring(1);
+                    while(true) {
+                        String recipe = "";
+                        int recipeIndex = file.indexOf("$");
+                        if (recipeIndex != -1) {
+                            recipe = file.substring(0, recipeIndex);
+                        } else {
+                            break;
+                        }
+                        int firstAt = recipe.indexOf('@');
+                        int secondAt = recipe.indexOf('@', firstAt + 1);
+                        String title = recipe.substring(0, firstAt).trim();
+                        String mealType = recipe.substring(firstAt + 1, secondAt).trim();
+                        String description = recipe.substring(secondAt + 1).trim();
+                        Recipe newRecipe = new Recipe(title, description, mealType);
+                        RecipeList recipeList = mainWindow.getRecipeList();
+                        recipeStorage.add(newRecipe);
+                        recipeList.addRecipe(title);
+                        file = file.substring(recipeIndex + 1);
+                    }
+                } catch (Exception ex) {
+
+                }
+                start = false;
+                primaryStage.setScene(mainScene);
+            }
+        });
+
+
         // Make window non-resizable
         primaryStage.setResizable(false);
+        primaryStage.setOnCloseRequest(e -> {
+            try {
+                storageCSV.delete();
+                storageCSV.createNewFile();
+                FileWriter csvWriter = new FileWriter(storageCSV);
+                for (Recipe r : recipeStorage) {
+                    String line = r.getTitle() + "@" + r.getMealType() + "@" + r.getDescription() + "$\n"; 
+                    csvWriter.write(line);
+                }
+                csvWriter.close();
+            } catch (Exception ex) {
 
+            }
+        });
         // Show the app
         primaryStage.show();
 
