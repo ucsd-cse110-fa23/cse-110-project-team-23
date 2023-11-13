@@ -13,7 +13,6 @@ import java.io.*;
 import java.net.*;
 import org.json.*;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -62,7 +61,7 @@ class RecipeBox extends HBox {
         this.title.setOnAction(e -> {
             Recipe recipe = getRecipeByTitle(title);
             if (recipe != null) {
-                RecipeDetailsView recipeDetailsView = new RecipeDetailsView(recipe, this.getScene());
+                RecipeDetailsView recipeDetailsView = new RecipeDetailsView(recipe, this.title.getScene());
                 Scene recipeDetailsScene = new Scene(recipeDetailsView, 500, 400);
                 Stage stage = (Stage) this.getScene().getWindow();
                 stage.setScene(recipeDetailsScene);
@@ -123,6 +122,10 @@ class MainWindowHeader extends HBox {
     }
 
     public Button getAddButton() {
+        return addRecipeButton;
+    }
+
+    public Button getAddRecipeButton() {
         return addRecipeButton;
     }
 
@@ -207,13 +210,13 @@ class SuggestWindowBody extends VBox {
         this.setStyle("-fx-background-color: #F0F8FF;");
 
         ingredientLabel = new Label();
-        ingredientLabel.setText("Ingredients");
-        ingredientLabel.setPrefSize(100, 30);
+        ingredientLabel.setText("Record your meal type and ingredients");
+        ingredientLabel.setPrefSize(400, 30);
 
         ingredientTextField = new TextField();
         ingredientTextField.setPrefSize(400, 50);
 
-        recordIngredientsButton = new Button("Record Ingredients");
+        recordIngredientsButton = new Button("Record");
         confirmButton = new Button("Confirm Ingredients");
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF; -fx-font-weight: bold; -fx-font: 11 arial;";
         recordIngredientsButton.setStyle(defaultButtonStyle);
@@ -242,23 +245,6 @@ class SuggestWindowBody extends VBox {
         });
 
         confirmButton.setStyle(defaultButtonStyle);
-        confirmButton.setOnAction(e -> {
-            if (recording) {
-                recording = false;
-                recordIngredientsButton.setText("Record Ingredients");
-                stopRecording();
-                recordingLabel.setVisible(false);
-            }
-
-            String ingredients = ingredientTextField.getText();
-            try {
-                ChatAPI chatAPI = new ChatAPI(ingredients);
-                String suggestion = chatAPI.suggestRecipe();
-                System.out.println("Generated Recipe Suggestion:\n" + suggestion);
-            } catch (IOException | InterruptedException ex) {
-                ex.printStackTrace();
-            }
-        });
 
         // Add buttons to the layout
         HBox buttonBox = new HBox(recordIngredientsButton, confirmButton);
@@ -287,7 +273,7 @@ class SuggestWindowBody extends VBox {
         int sampleSizeInBits = 16;
 
         // the number of audio channels in this format (1 for mono, 2 for stereo).
-        int channels = 2;
+        int channels = 1;
 
         // whether the data is signed or unsigned.
         boolean signed = true;
@@ -344,6 +330,10 @@ class SuggestWindowBody extends VBox {
     private void stopRecording() {
         targetDataLine.stop();
         targetDataLine.close();
+    }
+
+    public Button getConfirmButton() {
+        return confirmButton;
     }
 
 }
@@ -560,9 +550,12 @@ class RecipeDetailsView extends BorderPane {
         this.setTop(titleText);
         this.setCenter(descriptionTextArea);
         this.setBottom(footer);
+        descriptionTextArea.setPrefSize(400, 300);
 
         footer.getSaveButton().setOnAction(e -> {
             recipe.setDescription(this.getDescription());
+            Stage stage = (Stage) footer.getSaveButton().getScene().getWindow();
+            stage.setScene(previousScene);
         });
     }
 
@@ -591,6 +584,29 @@ public class PantryPal extends Application {
         SuggestWindow suggestWindow = new SuggestWindow();
         Scene suggestScene = new Scene(suggestWindow, 500, 400);
 
+        SuggestWindowBody suggestWindowBody = suggestWindow.getSuggestWindowBody();
+
+        Button confirmButton = suggestWindowBody.getConfirmButton();
+        confirmButton.setOnAction(e -> {
+            String ingredients = suggestWindowBody.getIngredients();
+
+            try {
+                ChatAPI chatAPI = new ChatAPI(ingredients);
+                String suggestion = chatAPI.suggestRecipe();
+                String title = suggestion.split("\n")[2];
+                Recipe suggestRecipe = new Recipe(title, suggestion, "Breakfast");
+                PantryPal.recipeStorage.add(suggestRecipe);
+                RecipeDetailsView recipeView = new RecipeDetailsView(suggestRecipe, mainScene);
+                Scene recipeScene = new Scene(recipeView, 500, 400);
+                Stage stage = (Stage) confirmButton.getScene().getWindow();
+                RecipeBox suggestedRB = new RecipeBox(title);
+                mainWindow.getRecipeList().getChildren().add(0, suggestedRB);
+                stage.setScene(recipeScene);
+                // System.out.println("Generated Recipe Suggestion:\n" + suggestion);
+            } catch (IOException | InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        });
         // Set the title of the app
         primaryStage.setTitle("PantryPal");
         // Create scene of mentioned size with the border pane
