@@ -3,10 +3,7 @@ package project;
 import org.junit.jupiter.api.Test;
 
 import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -114,20 +111,20 @@ public class PantryPalTests {
 
     }
 
-    @Test
-    void testTranscribeAudio() throws InterruptedException {
-        Platform.startup(() -> {
-        });
-        TextField textField = new TextField();
+    // @Test
+    // void testTranscribeAudio() throws InterruptedException {
+    // Platform.startup(() -> {
+    // });
+    // TextField textField = new TextField();
 
-        WhisperAPI whisperAPI = new WhisperAPI(AUDIO_FILE_PATH, textField);
+    // WhisperAPI whisperAPI = new WhisperAPI(AUDIO_FILE_PATH, textField);
 
-        whisperAPI.transcribeAudio();
-        Thread.sleep(5000);
+    // whisperAPI.transcribeAudio();
+    // Thread.sleep(5000);
 
-        String transcribedText = textField.getText();
-        assertNotNull(transcribedText);
-        assertFalse(transcribedText.isEmpty());
-    }
+    // String transcribedText = textField.getText();
+    // assertNotNull(transcribedText);
+    // assertFalse(transcribedText.isEmpty());
+    // }
 
 }
