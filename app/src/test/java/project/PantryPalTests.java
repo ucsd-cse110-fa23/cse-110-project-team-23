@@ -1,24 +1,35 @@
 package project;
 
-import org.junit.jupiter.api.Test;
+import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.embed.swing.JFXPanel;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.scene.text.*;
+import javafx.scene.layout.*;
+import javafx.scene.control.*;
+import javafx.geometry.*;
+import javax.sound.sampled.*;
+import java.io.*;
+import java.net.*;
+import org.json.*;
+
+import java.util.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PantryPalTests {
     String title;
     String description = "Raw";
     String mealType = "Breakfast";
     int startSize;
+    private static final String AUDIO_FILE_PATH = "helloWorld.m4a";
+
     @BeforeEach
     void setUp() {
         startSize = 0;
@@ -28,7 +39,6 @@ public class PantryPalTests {
         PantryPal.recipeStorage = new ArrayList<>();
         Recipe testRecipe = new Recipe(title, description, mealType);
         PantryPal.recipeStorage.add(testRecipe);
-
     }
 
     @Test
@@ -36,9 +46,9 @@ public class PantryPalTests {
         boolean recipeAdded = false;
         for (int i = 0; i < PantryPal.recipeStorage.size(); i++) {
             Recipe recipe = PantryPal.recipeStorage.get(i);
-            if (recipe.getTitle().equals(title) 
-                && recipe.getDescription().equals(description) 
-                && recipe.getMealType().equals(mealType)) {
+            if (recipe.getTitle().equals(title)
+                    && recipe.getDescription().equals(description)
+                    && recipe.getMealType().equals(mealType)) {
                 recipeAdded = true;
             }
         }
@@ -50,27 +60,27 @@ public class PantryPalTests {
     }
 
     @Test
-    void testSetMealtype(){
+    void testSetMealtype() {
         Recipe recipe = new Recipe(null, null, null);
         recipe.setMealType("Lunch");
 
         assertEquals("Lunch", recipe.getMealType());
     }
 
-    @Test 
-    void testViewRecipe(){
+    @Test
+    void testViewRecipe() {
         Recipe recipe = PantryPal.recipeStorage.get(0);
         String mealtype1 = recipe.getMealType();
         String description1 = recipe.getDescription();
         String title1 = recipe.getTitle();
 
-        assertEquals (title1,title);
+        assertEquals(title1, title);
         assertEquals(description1, description);
         assertEquals(mealtype1, mealType);
     }
-    
+
     @Test
-    void testEditRecipe(){
+    void testEditRecipe() {
         Recipe recipe = PantryPal.recipeStorage.get(0);
         recipe.setDescription("null");
         recipe.setMealType("brunch");
@@ -81,20 +91,46 @@ public class PantryPalTests {
         assertEquals("nothing", recipe.getTitle());
     }
 
-    @Test 
-    void testDeleteRecipe(){
+    @Test
+    void testDeleteRecipe() {
         PantryPal.recipeStorage.remove(0);
 
         assertEquals(0, PantryPal.recipeStorage.size());
     }
 
     @Test
-    void testSaveRecipe(){
+    void testSaveRecipe() {
         Recipe recipe1 = new Recipe("orange chicken", "orange,chicken", "Lunch");
 
         PantryPal.recipeStorage.add(recipe1);
-        assertEquals(recipe1,PantryPal.recipeStorage.get(1));
+        assertEquals(recipe1, PantryPal.recipeStorage.get(1));
     }
 
-    
+    @Test
+    void testChatGpt() {
+        try {
+            ChatAPI chat = new ChatAPI(description);
+            Recipe recipe2 = new Recipe("", "", "");
+            recipe2.setDescription(chat.suggestRecipe());
+
+            assertNotEquals("", recipe2.getDescription());
+        } catch (Exception e1) {
+
+        }
+
+    }
+
+    @Test
+    void testTranscribeAudio() throws InterruptedException {
+        JFXPanel jfxPanel = new JFXPanel();
+        TextField textField = new TextField();
+        WhisperAPI whisperAPI = new WhisperAPI(AUDIO_FILE_PATH, textField);
+
+        whisperAPI.transcribeAudio();
+        Thread.sleep(5000);
+
+        String transcribedText = textField.getText();
+        assertEquals("Hello, world!", transcribedText.trim());
+    }
+
 }
