@@ -10,5 +10,6 @@
         "/Users/leo/Desktop/javafxlib/lib/javafx.media.jar",
         "/Users/leo/Desktop/javafxlib/lib/javafx.swing.jar",
         "/Users/leo/Desktop/javafxlib/lib/javafx.web.jar"
-    ]
+    ],
+    "java.compile.nullAnalysis.mode": "automatic"
 }

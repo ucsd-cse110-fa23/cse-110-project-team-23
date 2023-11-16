@@ -32,15 +32,15 @@ public class PantryPal extends Application {
         File storageCSV = new File("recipes.csv");
         // Setting the layout of the MainWindow
         MainWindow mainWindow = new MainWindow();
-        Scene mainScene = new Scene(mainWindow, 500, 400);
+        Scene mainScene = new Scene(mainWindow, 800, 400);
 
         // Setting the layout of the AddWindow
         AddWindow addWindow = new AddWindow();
-        Scene addScene = new Scene(addWindow, 500, 400);
+        Scene addScene = new Scene(addWindow);
 
         // Setting the layout of the SuggestWindow
         SuggestWindow suggestWindow = new SuggestWindow();
-        Scene suggestScene = new Scene(suggestWindow, 500, 400);
+        Scene suggestScene = new Scene(suggestWindow);
 
         SuggestWindowBody suggestWindowBody = suggestWindow.getSuggestWindowBody();
 
@@ -53,8 +53,12 @@ public class PantryPal extends Application {
                 double width = primaryStage.getWidth();
                 boolean fullscreen = primaryStage.isFullScreen();
                 primaryStage.setScene(addScene);
-                primaryStage.setHeight(height);
-                primaryStage.setWidth(width);
+                if (fullscreen == true){
+                    primaryStage.setFullScreen(fullscreen);
+                }else{
+                    primaryStage.setHeight(height);
+                    primaryStage.setWidth(width);
+                }
                 
                 
                 suggestWindow.getSuggestWindowBody().clear();
@@ -72,26 +76,48 @@ public class PantryPal extends Application {
         Button addRecipeButton = mainWindow.getHeader().getAddButton();
         addRecipeButton.setOnAction(e -> {
             double height = primaryStage.getHeight();
+            double width = primaryStage.getWidth();
             boolean fullscreen = primaryStage.isFullScreen();
-            double width  = primaryStage.getWidth();
             primaryStage.setScene(suggestScene);
-            
-            primaryStage.setWidth(width);
-            primaryStage.setHeight(height);
-        });
-
+            if (fullscreen == true){
+                primaryStage.setFullScreen(fullscreen);
+            }else{
+                primaryStage.setHeight(height);
+                primaryStage.setWidth(width);
+            }
+        });    
         // Link returnButton with its function
         Button returnButton = addWindow.getAddWindowHeader().getReturnButton();
         AddWindowBody addWindowBody = addWindow.getAddWindowBody();
         returnButton.setOnAction(e -> {
             // Return to main list and clear texts added
             addWindowBody.clear();
+            double height = primaryStage.getHeight();
+            double width = primaryStage.getWidth();
+            boolean fullscreen = primaryStage.isFullScreen();
             primaryStage.setScene(mainScene);
+            if (fullscreen == true){
+                primaryStage.setFullScreen(fullscreen);
+            }else{
+                primaryStage.setHeight(height);
+                primaryStage.setWidth(width);
+            }
         });
 
         // Link returnButton in SuggestWindow with its function
         Button returnSuggestButton = suggestWindow.getSuggestWindowHeader().getReturnButton();
-        returnSuggestButton.setOnAction(e -> primaryStage.setScene(mainScene));
+        returnSuggestButton.setOnAction(e -> {
+            double height = primaryStage.getHeight();
+            double width = primaryStage.getWidth();
+            boolean fullscreen = primaryStage.isFullScreen();
+            primaryStage.setScene(mainScene);
+            if (fullscreen == true){
+                primaryStage.setFullScreen(fullscreen);
+            }else{
+                primaryStage.setHeight(height);
+                primaryStage.setWidth(width);
+            }
+        });
 
         // Link completeButton with its function
         Button completeButton = addWindow.getAddWindowFooter().getCompleteButton();
@@ -111,7 +137,16 @@ public class PantryPal extends Application {
             addWindowBody.clear();
 
             // Switch back to mainScene
+            double height = primaryStage.getHeight();
+            double width = primaryStage.getWidth();
+            boolean fullscreen = primaryStage.isFullScreen();
             primaryStage.setScene(mainScene);
+            if (fullscreen == true){
+                primaryStage.setFullScreen(fullscreen);
+            }else{
+                primaryStage.setHeight(height);
+                primaryStage.setWidth(width);
+            }
         });
 
 

@@ -25,7 +25,7 @@ class MainWindowHeader extends HBox {
 
     MainWindowHeader() {
         // Set Header appearance
-        this.setPrefSize(1140, 60);
+        this.setPrefSize(500, 60);
         this.setStyle("-fx-background-color: #F0F8FF;");
         this.setSpacing(30);
 
@@ -98,19 +98,19 @@ class RecipeBox extends HBox {
     private Button deleteButton;
 
     RecipeBox(String title) {
-        this.setPrefSize(1140, 50);
+        //this.setPrefSize(1140, 50);
 
         // Set recipe appearance
         this.title = new Button();
-        this.title.setPrefSize(300, 50);
+        this.title.setPrefSize(800, 50);
         this.title.setText(title);
         this.title.setStyle(defaultButtonStyle);
         this.getChildren().add(this.title);
 
         // Set up delete button apperance
         this.deleteButton = new Button("delete");
-        this.deleteButton.setPrefSize(150, 100);
-
+        this.deleteButton.setPrefSize(350, 50);
+        
         // deletes the recipe from the list
         this.deleteButton.setOnAction(e -> {
             Recipe Rp = getRecipeByTitle(this.title.getText());
