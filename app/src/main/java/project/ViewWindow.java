@@ -67,7 +67,16 @@ public class ViewWindow extends BorderPane {
         // (main)
         footer.getReturnButton().setOnAction(e -> {
             Stage stage = (Stage) footer.getReturnButton().getScene().getWindow();
-            stage.setScene(previousScene);
+            double height = stage.getHeight();
+                double width  = stage.getWidth();
+                boolean fullscreen = stage.isFullScreen();
+                stage.setScene(previousScene);
+                if (fullscreen == true){
+                    stage.setFullScreen(fullscreen);
+                }else{
+                    stage.setHeight(height);
+                    stage.setWidth(width);
+                }
         });
 
         this.setTop(titleText);
@@ -78,7 +87,16 @@ public class ViewWindow extends BorderPane {
         footer.getSaveButton().setOnAction(e -> {
             recipe.setDescription(this.getDescription());
             Stage stage = (Stage) footer.getSaveButton().getScene().getWindow();
-            stage.setScene(previousScene);
+            double height = stage.getHeight();
+                double width  = stage.getWidth();
+                boolean fullscreen = stage.isFullScreen();
+                stage.setScene(previousScene);
+                if (fullscreen == true){
+                    stage.setFullScreen(fullscreen);
+                }else{
+                    stage.setHeight(height);
+                    stage.setWidth(width);
+                }
         });
     }
 

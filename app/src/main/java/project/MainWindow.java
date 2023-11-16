@@ -132,7 +132,17 @@ class RecipeBox extends HBox {
                 ViewWindow recipeDetailsView = new ViewWindow(recipe, this.title.getScene());
                 Scene recipeDetailsScene = new Scene(recipeDetailsView, 500, 400);
                 Stage stage = (Stage) this.getScene().getWindow();
+                double height = stage.getHeight();
+                double width  = stage.getWidth();
+                boolean fullscreen = stage.isFullScreen();
                 stage.setScene(recipeDetailsScene);
+                if (fullscreen == true){
+                    stage.setFullScreen(fullscreen);
+                }else{
+                    stage.setHeight(height);
+                    stage.setWidth(width);
+                }
+                
             }
         });
     }
