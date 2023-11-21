@@ -18,14 +18,13 @@ public class WhisperAPI {
     private String filePath;
     private TextField ingredientTextField;
 
-    private static final String API_ENDPOINT = "https://api.openai.com/v1/audio/transcriptions";
-    private static final String TOKEN = "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";
-    private static final String MODEL = "whisper-1";
+    private final String API_ENDPOINT = "https://api.openai.com/v1/audio/transcriptions";
+    private final String TOKEN = "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";
+    private final String MODEL = "whisper-1";
 
     public WhisperAPI(String filePath, TextField ingredientTextField) {
         this.filePath = filePath;
         this.ingredientTextField = ingredientTextField;
-
     }
 
     public void transcribeAudio() {
@@ -88,7 +87,7 @@ public class WhisperAPI {
 
     // Helper method to write a parameter to the output stream in multipart form
     // data format
-    private static void writeParameterToOutputStream(
+    private void writeParameterToOutputStream(
             OutputStream outputStream,
             String parameterName,
             String parameterValue,
@@ -101,7 +100,7 @@ public class WhisperAPI {
 
     // Helper method to write a file to the output stream in multipart form data
     // format
-    private static void writeFileToOutputStream(
+    private void writeFileToOutputStream(
             OutputStream outputStream,
             File file,
             String boundary) throws IOException {
