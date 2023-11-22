@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.text.*;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.geometry.*;
 import javax.sound.sampled.*;
 import java.io.*;
@@ -46,26 +47,38 @@ public class PantryPal extends Application {
 
         Button confirmButton = suggestWindowBody.getConfirmButton();
         confirmButton.setOnAction(e -> {
-            try {
-                ChatAPI instruction = new ChatAPI(suggestWindow.getSuggestWindowBody().getIngredients());
-                String suggestedrecipe = instruction.suggestRecipe();
-                double height = primaryStage.getHeight();
-                double width = primaryStage.getWidth();
-                boolean fullscreen = primaryStage.isFullScreen();
-                primaryStage.setScene(addScene);
-                if (fullscreen == true){
-                    primaryStage.setFullScreen(fullscreen);
-                }else{
-                    primaryStage.setHeight(height);
-                    primaryStage.setWidth(width);
+            if (suggestWindow.getSuggestWindowBody().getIngredients().trim().isEmpty()) {
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("No Ingredients");
+                alert.setHeaderText("No Ingredients Entered");
+                alert.setContentText("Please enter or record ingredients before confirming");
+
+                alert.showAndWait();
+            } else {
+                try {
+                    String mealType = suggestWindow.getSuggestWindowBody().getMealType();
+                    String ingredients = suggestWindow.getSuggestWindowBody().getIngredients();
+                    String instructionString = mealType + " meal type: " + ingredients;
+                    ChatAPI instruction = new ChatAPI(instructionString);
+                    String suggestedrecipe = instruction.suggestRecipe();
+                    double height = primaryStage.getHeight();
+                    double width = primaryStage.getWidth();
+                    boolean fullscreen = primaryStage.isFullScreen();
+                    primaryStage.setScene(addScene);
+                    if (fullscreen == true) {
+                        primaryStage.setFullScreen(fullscreen);
+                    } else {
+                        primaryStage.setHeight(height);
+                        primaryStage.setWidth(width);
+                    }
+
+                    suggestWindow.getSuggestWindowBody().clear();
+                    addWindow.getAddWindowBody().setRecipe(suggestedrecipe);
+                } catch (IOException | InterruptedException ex) {
+                    ex.printStackTrace();
                 }
-                
-                
-                suggestWindow.getSuggestWindowBody().clear();
-                addWindow.getAddWindowBody().setRecipe(suggestedrecipe);
-            } catch (IOException | InterruptedException ex) {
-                ex.printStackTrace();
             }
+
         });
         // Set the title of the app
         primaryStage.setTitle("PantryPal");
@@ -79,13 +92,13 @@ public class PantryPal extends Application {
             double width = primaryStage.getWidth();
             boolean fullscreen = primaryStage.isFullScreen();
             primaryStage.setScene(suggestScene);
-            if (fullscreen == true){
+            if (fullscreen == true) {
                 primaryStage.setFullScreen(fullscreen);
-            }else{
+            } else {
                 primaryStage.setHeight(height);
                 primaryStage.setWidth(width);
             }
-        });    
+        });
         // Link returnButton with its function
         Button returnButton = addWindow.getAddWindowHeader().getReturnButton();
         AddWindowBody addWindowBody = addWindow.getAddWindowBody();
@@ -96,9 +109,9 @@ public class PantryPal extends Application {
             double width = primaryStage.getWidth();
             boolean fullscreen = primaryStage.isFullScreen();
             primaryStage.setScene(mainScene);
-            if (fullscreen == true){
+            if (fullscreen == true) {
                 primaryStage.setFullScreen(fullscreen);
-            }else{
+            } else {
                 primaryStage.setHeight(height);
                 primaryStage.setWidth(width);
             }
@@ -111,9 +124,9 @@ public class PantryPal extends Application {
             double width = primaryStage.getWidth();
             boolean fullscreen = primaryStage.isFullScreen();
             primaryStage.setScene(mainScene);
-            if (fullscreen == true){
+            if (fullscreen == true) {
                 primaryStage.setFullScreen(fullscreen);
-            }else{
+            } else {
                 primaryStage.setHeight(height);
                 primaryStage.setWidth(width);
             }
@@ -132,7 +145,6 @@ public class PantryPal extends Application {
             recipeStorage.add(newRecipe);
             recipeList.addRecipe(title);
 
-
             // Clear text in addWindow
             addWindowBody.clear();
 
@@ -141,29 +153,28 @@ public class PantryPal extends Application {
             double width = primaryStage.getWidth();
             boolean fullscreen = primaryStage.isFullScreen();
             primaryStage.setScene(mainScene);
-            if (fullscreen == true){
+            if (fullscreen == true) {
                 primaryStage.setFullScreen(fullscreen);
-            }else{
+            } else {
                 primaryStage.setHeight(height);
                 primaryStage.setWidth(width);
             }
         });
 
-
-        //Button restoreButton = mainWindow.getHeader().getRestoreButton();
+        // Button restoreButton = mainWindow.getHeader().getRestoreButton();
         primaryStage.setOnShown(e -> {
             if (start) {
                 try {
                     FileReader csvReader = new FileReader(storageCSV);
                     int curr = 0;
                     String file = "";
-                    while(curr != -1) {
+                    while (curr != -1) {
                         file += (char) curr;
                         curr = csvReader.read();
                     }
                     csvReader.close();
                     file = file.substring(1);
-                    while(true) {
+                    while (true) {
                         String recipe = "";
                         int recipeIndex = file.indexOf("$");
                         if (recipeIndex != -1) {
@@ -190,7 +201,6 @@ public class PantryPal extends Application {
             }
         });
 
-
         // Make window non-resizable
         primaryStage.setResizable(true);
         primaryStage.setOnCloseRequest(e -> {
@@ -199,7 +209,7 @@ public class PantryPal extends Application {
                 storageCSV.createNewFile();
                 FileWriter csvWriter = new FileWriter(storageCSV);
                 for (Recipe r : recipeStorage) {
-                    String line = r.getTitle() + "@" + r.getMealType() + "@" + r.getDescription() + "$\n"; 
+                    String line = r.getTitle() + "@" + r.getMealType() + "@" + r.getDescription() + "$\n";
                     csvWriter.write(line);
                 }
                 csvWriter.close();
