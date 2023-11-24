@@ -69,6 +69,8 @@ class SuggestWindowHeader extends HBox {
  * Center segment for SuggestWindow
  */
 class SuggestWindowBody extends VBox {
+    private Label mealTypeLabel;
+    private ComboBox<String> mealTypeBox;
     private Label ingredientLabel;
     private TextField ingredientTextField;
     private Button recordIngredientsButton;
@@ -84,8 +86,14 @@ class SuggestWindowBody extends VBox {
     public SuggestWindowBody() {
         this.setStyle("-fx-background-color: #F0F8FF;");
 
+        mealTypeLabel = new Label();
+        mealTypeLabel.setText("Select your meal type");
+        mealTypeBox = new ComboBox<>();
+        mealTypeBox.getItems().addAll("Breakfast", "Lunch", "Dinner");
+        mealTypeBox.setValue("Breakfast");
+
         ingredientLabel = new Label();
-        ingredientLabel.setText("Record your meal type and ingredients");
+        ingredientLabel.setText("Record your ingredients");
         ingredientLabel.setPrefSize(400, 30);
 
         ingredientTextField = new TextField();
@@ -127,8 +135,12 @@ class SuggestWindowBody extends VBox {
 
         audioFormat = getAudioFormat();
 
-        this.getChildren().addAll(ingredientLabel, ingredientTextField, buttonBox,
+        this.getChildren().addAll(mealTypeLabel, mealTypeBox, ingredientLabel, ingredientTextField, buttonBox,
                 recordingLabel);
+    }
+
+    public String getMealType() {
+        return mealTypeBox.getValue();
     }
 
     public String getIngredients() {
@@ -216,5 +228,3 @@ class SuggestWindowBody extends VBox {
 /**
  * Suggest window layout
  */
-
-
