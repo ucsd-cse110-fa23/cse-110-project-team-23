@@ -24,16 +24,32 @@ import java.util.*;
 
 public class PantryPal extends Application {
     public static List<Recipe> recipeStorage;
-    public boolean start = true;
+    private UserSession userSession;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        // Initialize new user session
+        userSession = UserSession.getInstance();
+
         // Initiate recipe storage
         recipeStorage = new ArrayList<>();
-        File storageCSV = new File("recipes.csv");
+        // File storageCSV = new File("recipes.csv");
+
         // Setting the layout of the MainWindow
-        MainWindow mainWindow = new MainWindow();
+        MainWindow mainWindow = new MainWindow(userSession);
         Scene mainScene = new Scene(mainWindow, 800, 400);
+
+        // Setting OpenAppWindow
+        OpenAppWindow openAppWindow = new OpenAppWindow();
+        Scene openAppScene = new Scene(openAppWindow, 800, 400);
+
+        // Setting login Window
+        LoginWindow loginWindow = new LoginWindow(primaryStage, mainScene, userSession, mainWindow.getRecipeList());
+        Scene loginScene = new Scene(loginWindow, 800, 400);
+
+        // Setting createAccount window
+        CreateAccountWindow createAccountWindow = new CreateAccountWindow(primaryStage, loginScene);
+        Scene createAccountScene = new Scene(createAccountWindow, 800, 400);
 
         // Setting the layout of the AddWindow
         AddWindow addWindow = new AddWindow();
@@ -58,7 +74,7 @@ public class PantryPal extends Application {
                 try {
                     String mealType = suggestWindow.getSuggestWindowBody().getMealType();
                     String ingredients = suggestWindow.getSuggestWindowBody().getIngredients();
-                    String instructionString = mealType + " meal type: " + ingredients;
+                    String instructionString = "meal type: " + mealType + " Ingredients: " + ingredients;
                     ChatAPI instruction = new ChatAPI(instructionString);
                     String suggestedrecipe = instruction.suggestRecipe();
                     double height = primaryStage.getHeight();
@@ -83,7 +99,30 @@ public class PantryPal extends Application {
         // Set the title of the app
         primaryStage.setTitle("PantryPal");
         // Create scene of mentioned size with the border pane
-        primaryStage.setScene(mainScene);
+        primaryStage.setScene(openAppScene);
+
+        // Link goCreateAccButton button with its function
+        Button goCreateAccButon = openAppWindow.getCreateAccountButton();
+        goCreateAccButon.setOnAction(e -> {
+            primaryStage.setScene(createAccountScene);
+        });
+
+        // Link goLoginButton button with its function
+        Button goLoginButton = openAppWindow.getLoginButton();
+        goLoginButton.setOnAction(e -> {
+            primaryStage.setScene(loginScene);
+        });
+
+        // Link return buttons in CreateAccount and Login with functionality
+        Button createAccountBackButton = createAccountWindow.getCreateAccountHeader().getReturnButton();
+        createAccountBackButton.setOnAction(e -> {
+            primaryStage.setScene(openAppScene);
+        });
+
+        Button loginReturnButton = loginWindow.getLoginWindowHeader().getReturnButton();
+        loginReturnButton.setOnAction(e -> {
+            primaryStage.setScene(openAppScene);
+        });
 
         // Link addRecipeButton with its function
         Button addRecipeButton = mainWindow.getHeader().getAddButton();
@@ -99,6 +138,7 @@ public class PantryPal extends Application {
                 primaryStage.setWidth(width);
             }
         });
+
         // Link returnButton with its function
         Button returnButton = addWindow.getAddWindowHeader().getReturnButton();
         AddWindowBody addWindowBody = addWindow.getAddWindowBody();
@@ -139,6 +179,8 @@ public class PantryPal extends Application {
             String description = addWindowBody.getDescription();
             String mealType = addWindowBody.getMealType();
             Recipe newRecipe = new Recipe(title, description, mealType);
+            MongoDBClient mongoClient = new MongoDBClient(userSession.getUsername());
+            mongoClient.insertRecipe(title, mealType, description);
             RecipeList recipeList = mainWindow.getRecipeList();
 
             // Store recipe in storage for view/delete/edit
@@ -159,60 +201,14 @@ public class PantryPal extends Application {
                 primaryStage.setHeight(height);
                 primaryStage.setWidth(width);
             }
-        });
 
-        // Button restoreButton = mainWindow.getHeader().getRestoreButton();
-        primaryStage.setOnShown(e -> {
-            if (start) {
-                try {
-                    FileReader csvReader = new FileReader(storageCSV);
-                    int curr = 0;
-                    String file = "";
-                    while (curr != -1) {
-                        file += (char) curr;
-                        curr = csvReader.read();
-                    }
-                    csvReader.close();
-                    file = file.substring(1);
-                    while (true) {
-                        String recipe = "";
-                        int recipeIndex = file.indexOf("$");
-                        if (recipeIndex != -1) {
-                            recipe = file.substring(0, recipeIndex);
-                        } else {
-                            break;
-                        }
-                        int firstAt = recipe.indexOf('@');
-                        int secondAt = recipe.indexOf('@', firstAt + 1);
-                        String title = recipe.substring(0, firstAt).trim();
-                        String mealType = recipe.substring(firstAt + 1, secondAt).trim();
-                        String description = recipe.substring(secondAt + 1).trim();
-                        Recipe newRecipe = new Recipe(title, description, mealType);
-                        RecipeList recipeList = mainWindow.getRecipeList();
-                        recipeStorage.add(newRecipe);
-                        recipeList.addRecipe(title);
-                        file = file.substring(recipeIndex + 1);
-                    }
-                } catch (Exception ex) {
-
-                }
-                start = false;
-                primaryStage.setScene(mainScene);
-            }
         });
 
         // Make window non-resizable
         primaryStage.setResizable(true);
         primaryStage.setOnCloseRequest(e -> {
             try {
-                storageCSV.delete();
-                storageCSV.createNewFile();
-                FileWriter csvWriter = new FileWriter(storageCSV);
-                for (Recipe r : recipeStorage) {
-                    String line = r.getTitle() + "@" + r.getMealType() + "@" + r.getDescription() + "$\n";
-                    csvWriter.write(line);
-                }
-                csvWriter.close();
+                userSession.clearSession();
             } catch (Exception ex) {
 
             }
