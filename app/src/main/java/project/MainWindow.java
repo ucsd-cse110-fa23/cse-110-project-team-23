@@ -38,11 +38,11 @@ class MainWindowHeader extends HBox {
         addRecipeButton = new Button("Add Recipe");
         addRecipeButton.setStyle(defaultButtonStyle);
 
-        restoreRecipes = new Button ("Restore recipes");
+        restoreRecipes = new Button("Restore recipes");
         restoreRecipes.setStyle(defaultButtonStyle);
 
         this.getChildren().addAll(titleText, addRecipeButton);
-        //this.getChildren().add(restoreRecipes);
+        // this.getChildren().add(restoreRecipes);
     }
 
     public Button getAddButton() {
@@ -66,9 +66,9 @@ public class MainWindow extends BorderPane {
     private RecipeList recipeList;
     private ScrollPane scrollPane;
 
-    public MainWindow() {
+    public MainWindow(UserSession userSession) {
         mainWindowHeader = new MainWindowHeader();
-        recipeList = new RecipeList();
+        recipeList = new RecipeList(userSession);
 
         scrollPane = new ScrollPane(recipeList);
         scrollPane.setFitToWidth(true);
@@ -97,8 +97,8 @@ class RecipeBox extends HBox {
     private String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
     private Button deleteButton;
 
-    RecipeBox(String title) {
-        //this.setPrefSize(1140, 50);
+    RecipeBox(String title, UserSession userSession) {
+        // this.setPrefSize(1140, 50);
 
         // Set recipe appearance
         this.title = new Button();
@@ -110,7 +110,7 @@ class RecipeBox extends HBox {
         // Set up delete button apperance
         this.deleteButton = new Button("delete");
         this.deleteButton.setPrefSize(350, 50);
-        
+
         // deletes the recipe from the list
         this.deleteButton.setOnAction(e -> {
             Recipe Rp = getRecipeByTitle(this.title.getText());
@@ -120,7 +120,9 @@ class RecipeBox extends HBox {
                 List.getChildren().remove(this);
             } catch (NullPointerException error) {
             }
-            ;
+
+            MongoDBClient mongoClient = new MongoDBClient(userSession.getUsername());
+            mongoClient.deleteRecipe(title);
         });
         // adds the delete button
         this.getChildren().add(this.deleteButton);
@@ -129,20 +131,22 @@ class RecipeBox extends HBox {
         this.title.setOnAction(e -> {
             Recipe recipe = getRecipeByTitle(title);
             if (recipe != null) {
-                ViewWindow recipeDetailsView = new ViewWindow(recipe, this.title.getScene());
+                ViewWindow recipeDetailsView = new ViewWindow(recipe, this.title.getScene(), userSession);
                 Scene recipeDetailsScene = new Scene(recipeDetailsView, 500, 400);
                 Stage stage = (Stage) this.getScene().getWindow();
                 double height = stage.getHeight();
-                double width  = stage.getWidth();
+                double width = stage.getWidth();
                 boolean fullscreen = stage.isFullScreen();
                 stage.setScene(recipeDetailsScene);
-                if (fullscreen == true){
+                if (fullscreen == true) {
                     stage.setFullScreen(fullscreen);
-                }else{
+                } else {
                     stage.setHeight(height);
                     stage.setWidth(width);
                 }
-                
+
+            } else {
+                System.out.println("no recipe");
             }
         });
     }
@@ -161,8 +165,10 @@ class RecipeBox extends HBox {
  * The main recipe list displayed in app.
  */
 class RecipeList extends VBox {
+    private UserSession userSession;
 
-    RecipeList() {
+    RecipeList(UserSession userSession) {
+        this.userSession = userSession;
         this.setSpacing(5); // sets spacing between recipes
         this.setPrefSize(1440, 560);
         this.setStyle("-fx-background-color: #F0F8FF;");
@@ -170,7 +176,6 @@ class RecipeList extends VBox {
 
     // Adds a single recipe to the main list given the title of recipe
     public void addRecipe(String title) {
-        this.getChildren().add(0, new RecipeBox(title)); // add new recipe to top of list
+        this.getChildren().add(0, new RecipeBox(title, userSession)); // add new recipe to top of list
     }
 }
-

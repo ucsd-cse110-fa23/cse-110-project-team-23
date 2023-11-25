@@ -51,7 +51,7 @@ public class ViewWindow extends BorderPane {
     private TextArea descriptionTextArea;
     private RecipeViewFooter footer;
 
-    public ViewWindow(Recipe recipe, Scene previousScene) {
+    public ViewWindow(Recipe recipe, Scene previousScene, UserSession userSession) {
         footer = new RecipeViewFooter();
         this.setStyle("-fx-background-color: #F0F8FF;");
 
@@ -68,15 +68,15 @@ public class ViewWindow extends BorderPane {
         footer.getReturnButton().setOnAction(e -> {
             Stage stage = (Stage) footer.getReturnButton().getScene().getWindow();
             double height = stage.getHeight();
-                double width  = stage.getWidth();
-                boolean fullscreen = stage.isFullScreen();
-                stage.setScene(previousScene);
-                if (fullscreen == true){
-                    stage.setFullScreen(fullscreen);
-                }else{
-                    stage.setHeight(height);
-                    stage.setWidth(width);
-                }
+            double width = stage.getWidth();
+            boolean fullscreen = stage.isFullScreen();
+            stage.setScene(previousScene);
+            if (fullscreen == true) {
+                stage.setFullScreen(fullscreen);
+            } else {
+                stage.setHeight(height);
+                stage.setWidth(width);
+            }
         });
 
         this.setTop(titleText);
@@ -86,17 +86,19 @@ public class ViewWindow extends BorderPane {
 
         footer.getSaveButton().setOnAction(e -> {
             recipe.setDescription(this.getDescription());
+            MongoDBClient mongoClient = new MongoDBClient(userSession.getUsername());
+            mongoClient.editRecipe(recipe.getTitle(), this.getDescription());
             Stage stage = (Stage) footer.getSaveButton().getScene().getWindow();
             double height = stage.getHeight();
-                double width  = stage.getWidth();
-                boolean fullscreen = stage.isFullScreen();
-                stage.setScene(previousScene);
-                if (fullscreen == true){
-                    stage.setFullScreen(fullscreen);
-                }else{
-                    stage.setHeight(height);
-                    stage.setWidth(width);
-                }
+            double width = stage.getWidth();
+            boolean fullscreen = stage.isFullScreen();
+            stage.setScene(previousScene);
+            if (fullscreen == true) {
+                stage.setFullScreen(fullscreen);
+            } else {
+                stage.setHeight(height);
+                stage.setWidth(width);
+            }
         });
     }
 
