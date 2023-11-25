@@ -13,14 +13,16 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import java.util.*;
 
 public class LoginWindow extends BorderPane {
     private LoginWindowHeader header;
     private LoginWindowBody body;
 
-    public LoginWindow(Stage primaryStage, Scene targScene, UserSession userSession, RecipeList recipeList) {
+    public LoginWindow(Stage primaryStage, Scene targScene, UserSession userSession, RecipeList recipeList,
+            List<Recipe> recipeStorage) {
         header = new LoginWindowHeader();
-        body = new LoginWindowBody(primaryStage, targScene, userSession, recipeList);
+        body = new LoginWindowBody(primaryStage, targScene, userSession, recipeList, recipeStorage);
 
         this.setTop(header);
         this.setCenter(body);
@@ -68,7 +70,8 @@ class LoginWindowBody extends VBox {
     private PasswordField passwordField;
     private Button loginButton;
 
-    LoginWindowBody(Stage primaryStage, Scene targetScene, UserSession userSession, RecipeList recipeList) {
+    LoginWindowBody(Stage primaryStage, Scene targetScene, UserSession userSession, RecipeList recipeList,
+            List<Recipe> recipeStorage) {
         this.setStyle("-fx-background-color: #F0F8FF;");
         usernameField = new TextField();
         usernameField.setPromptText("Enter username");
@@ -97,7 +100,7 @@ class LoginWindowBody extends VBox {
                     primaryStage.setScene(targetScene);
                     userSession.setUsername(enteredUsername);
                     MongoDBClient mongoClient = new MongoDBClient(userSession.getUsername());
-                    mongoClient.openRecipes(recipeList);
+                    mongoClient.openRecipes(recipeList, recipeStorage);
                 } else if (result == 2) {
                     Alert alert = new Alert(AlertType.ERROR);
                     alert.setTitle("Error");

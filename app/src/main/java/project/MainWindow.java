@@ -131,7 +131,7 @@ class RecipeBox extends HBox {
         this.title.setOnAction(e -> {
             Recipe recipe = getRecipeByTitle(title);
             if (recipe != null) {
-                ViewWindow recipeDetailsView = new ViewWindow(recipe, this.title.getScene());
+                ViewWindow recipeDetailsView = new ViewWindow(recipe, this.title.getScene(), userSession);
                 Scene recipeDetailsScene = new Scene(recipeDetailsView, 500, 400);
                 Stage stage = (Stage) this.getScene().getWindow();
                 double height = stage.getHeight();
@@ -145,6 +145,8 @@ class RecipeBox extends HBox {
                     stage.setWidth(width);
                 }
 
+            } else {
+                System.out.println("no recipe");
             }
         });
     }

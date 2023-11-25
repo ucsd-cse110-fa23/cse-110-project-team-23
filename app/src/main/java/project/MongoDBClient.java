@@ -47,7 +47,30 @@ public class MongoDBClient {
         }
     }
 
-    public void openRecipes(RecipeList recipeList) {
+    public void editRecipe(String recipe, String newDescription) {
+        try (MongoClient mongoClient = MongoClients.create(uri)) {
+            MongoDatabase pantryPal_db = mongoClient.getDatabase("Database");
+            MongoCollection<Document> userCollection = pantryPal_db.getCollection(username);
+            Document query = new Document("title", recipe);
+            Document existingRecipe = userCollection.find(query).first();
+
+            if (existingRecipe != null) {
+                // Update the description field of the existing recipe
+                Bson update = set("description", newDescription);
+                UpdateResult updateResult = userCollection.updateOne(query, update);
+
+                if (updateResult.getModifiedCount() > 0) {
+                    System.out.println("Recipe edited successfully!");
+                } else {
+                    System.out.println("Recipe not found or no changes made.");
+                }
+            } else {
+                System.out.println("Recipe not found.");
+            }
+        }
+    }
+
+    public void openRecipes(RecipeList recipeList, List<Recipe> recipeStorage) {
         try (MongoClient mongoClient = MongoClients.create(uri)) {
             MongoDatabase pantryPalDb = mongoClient.getDatabase("Database");
 
@@ -66,7 +89,9 @@ public class MongoDBClient {
 
                 // Create and add a new Recipe object to the recipeList
                 Recipe newRecipe = new Recipe(title, description, mealType);
+
                 recipeList.addRecipe(title);
+                recipeStorage.add(newRecipe);
             }
         }
     }

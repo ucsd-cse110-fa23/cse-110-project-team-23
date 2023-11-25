@@ -44,7 +44,8 @@ public class PantryPal extends Application {
         Scene openAppScene = new Scene(openAppWindow, 800, 400);
 
         // Setting login Window
-        LoginWindow loginWindow = new LoginWindow(primaryStage, mainScene, userSession, mainWindow.getRecipeList());
+        LoginWindow loginWindow = new LoginWindow(primaryStage, mainScene, userSession, mainWindow.getRecipeList(),
+                recipeStorage);
         Scene loginScene = new Scene(loginWindow, 800, 400);
 
         // Setting createAccount window
