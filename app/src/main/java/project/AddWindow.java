@@ -112,6 +112,7 @@ class AddWindowBody extends VBox {
  */
 class AddWindowFooter extends HBox {
     private Button completeButton;
+    private Button refreshButton;
 
     AddWindowFooter() {
         this.setStyle("-fx-background-color: #F0F8FF;");
@@ -119,11 +120,19 @@ class AddWindowFooter extends HBox {
         completeButton = new Button();
         completeButton.setText("Complete");
 
-        this.getChildren().addAll(completeButton);
+        refreshButton = new Button();
+        refreshButton.setText("Refresh");
+
+        this.setSpacing(10);
+
+        this.getChildren().addAll(completeButton,refreshButton);
     }
 
     public Button getCompleteButton() {
         return completeButton;
+    }
+        public Button getRefreshButton() {
+        return refreshButton;
     }
 }
 

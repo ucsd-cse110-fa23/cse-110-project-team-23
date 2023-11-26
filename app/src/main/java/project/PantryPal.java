@@ -60,8 +60,9 @@ public class PantryPal extends Application {
         SuggestWindow suggestWindow = new SuggestWindow();
         Scene suggestScene = new Scene(suggestWindow);
 
-        SuggestWindowBody suggestWindowBody = suggestWindow.getSuggestWindowBody();
+        String[] originalIngredients = {""};
 
+        SuggestWindowBody suggestWindowBody = suggestWindow.getSuggestWindowBody();
         Button confirmButton = suggestWindowBody.getConfirmButton();
         confirmButton.setOnAction(e -> {
             if (suggestWindow.getSuggestWindowBody().getIngredients().trim().isEmpty()) {
@@ -91,6 +92,7 @@ public class PantryPal extends Application {
 
                     suggestWindow.getSuggestWindowBody().clear();
                     addWindow.getAddWindowBody().setRecipe(suggestedrecipe);
+                    originalIngredients[0] = ingredients;
                 } catch (IOException | InterruptedException ex) {
                     ex.printStackTrace();
                 }
@@ -202,6 +204,21 @@ public class PantryPal extends Application {
                 primaryStage.setHeight(height);
                 primaryStage.setWidth(width);
             }
+
+        });
+
+        Button refreshButton = addWindow.getAddWindowFooter().getRefreshButton();
+        refreshButton.setOnAction(e->{    
+            try {
+            String ingredients = originalIngredients[0];
+            String mealType = suggestWindow.getSuggestWindowBody().getMealType();
+            String instructionString = "meal type: " + mealType + " Ingredients: " + ingredients;
+            ChatAPI instruction = new ChatAPI(instructionString);
+            String suggestedrecipe = instruction.suggestRecipe();
+            addWindow.getAddWindowBody().setRecipe(suggestedrecipe);
+        } catch (IOException | InterruptedException ex) {
+            ex.printStackTrace();
+        }
 
         });
 
