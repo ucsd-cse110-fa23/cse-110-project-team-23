@@ -25,7 +25,7 @@ import java.util.*;
 public class PantryPal extends Application {
     public static List<Recipe> recipeStorage;
     private UserSession userSession;
-
+    public static MainWindow mainWindow;
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Initialize new user session
@@ -36,7 +36,7 @@ public class PantryPal extends Application {
         // File storageCSV = new File("recipes.csv");
 
         // Setting the layout of the MainWindow
-        MainWindow mainWindow = new MainWindow(userSession);
+        mainWindow = new MainWindow(userSession);
         Scene mainScene = new Scene(mainWindow, 800, 400);
 
         // Setting OpenAppWindow
