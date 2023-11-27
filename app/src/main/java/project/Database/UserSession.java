@@ -1,4 +1,4 @@
-package project;
+package project.Database;
 
 public class UserSession {
     private static UserSession instance;

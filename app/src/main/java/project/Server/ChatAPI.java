@@ -1,4 +1,4 @@
-package project;
+package project.Server;
 
 import java.io.IOException;
 import java.net.URI;

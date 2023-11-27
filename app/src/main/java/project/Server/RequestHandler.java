@@ -1,4 +1,4 @@
-package server;
+package project.Server;
 
 import com.sun.net.httpserver.*;
 import java.io.*;

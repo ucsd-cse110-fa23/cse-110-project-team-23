@@ -1,4 +1,4 @@
-package project;
+package project.Client.AddWindow;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -17,36 +17,9 @@ import java.util.*;
 
 
 /**
- * Header segment for AddWindow
- */
-class AddWindowHeader extends HBox {
-    private Button returnButton;
-
-    AddWindowHeader() {
-        // Set header appearance
-        this.setPrefSize(500, 60);
-        this.setStyle("-fx-background-color: #F0F8FF;");
-        this.setSpacing(30);
-
-        Text titleText = new Text("Add Recipe"); // Text of the Header
-        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
-        this.setAlignment(Pos.CENTER); // Align the text to the Center
-
-        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
-        returnButton = new Button("Return");
-        returnButton.setStyle(defaultButtonStyle);
-        this.getChildren().addAll(titleText, returnButton);
-    }
-
-    public Button getReturnButton() {
-        return returnButton;
-    }
-}
-
-/**
  * Center segment for AddWindow
  */
-class AddWindowBody extends VBox {
+public class AddWindowBody extends VBox {
     private Label titleLabel;
     private TextField title;
     private Label mealLabel;
@@ -54,7 +27,7 @@ class AddWindowBody extends VBox {
     private Label descriptionLabel;
     private TextArea description;
 
-    AddWindowBody() {
+    public AddWindowBody() {
         this.setStyle("-fx-background-color: #F0F8FF;");
         titleLabel = new Label();
         titleLabel.setText("Title");
@@ -104,65 +77,5 @@ class AddWindowBody extends VBox {
         title.setText(parseTitle);
         mealType.setText(parseMealType);
         description.setText(parseInstruction);
-    }
-}
-
-/**
- * Footer segment for AddWindow
- */
-class AddWindowFooter extends HBox {
-    private Button completeButton;
-    private Button refreshButton;
-
-    AddWindowFooter() {
-        this.setStyle("-fx-background-color: #F0F8FF;");
-
-        completeButton = new Button();
-        completeButton.setText("Complete");
-
-        refreshButton = new Button();
-        refreshButton.setText("Refresh");
-
-        this.setSpacing(10);
-
-        this.getChildren().addAll(completeButton,refreshButton);
-    }
-
-    public Button getCompleteButton() {
-        return completeButton;
-    }
-        public Button getRefreshButton() {
-        return refreshButton;
-    }
-}
-
-/**
- * Add window layout
- */
-public class AddWindow extends BorderPane {
-    private AddWindowHeader header;
-    private AddWindowBody body;
-    private AddWindowFooter footer;
-
-    public AddWindow() {
-        header = new AddWindowHeader();
-        body = new AddWindowBody();
-        footer = new AddWindowFooter();
-
-        this.setTop(header);
-        this.setCenter(body);
-        this.setBottom(footer);
-    }
-
-    public AddWindowHeader getAddWindowHeader() {
-        return header;
-    }
-
-    public AddWindowBody getAddWindowBody() {
-        return body;
-    }
-
-    public AddWindowFooter getAddWindowFooter() {
-        return footer;
     }
 }

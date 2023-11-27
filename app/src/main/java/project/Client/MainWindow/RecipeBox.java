@@ -1,8 +1,13 @@
-package project;
+package project.Client.MainWindow;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.stage.Stage;
+import project.PantryPal;
+import project.Client.ViewWindow.ViewWindow;
+import project.Database.MongoDBClient;
+import project.Database.UserSession;
+import project.Server.Recipe;
 import javafx.scene.Scene;
 import javafx.scene.text.*;
 import javafx.scene.layout.*;
@@ -12,82 +17,12 @@ import javax.sound.sampled.*;
 import java.io.*;
 import java.net.*;
 import org.json.*;
-
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.*;
-
-/**
- * Header segment of main window, displays Recipe List and the AddRecipe button
- */
-class MainWindowHeader extends HBox {
-
-    private Button addRecipeButton;
-    private Button restoreRecipes;
-
-    MainWindowHeader() {
-        // Set Header appearance
-        this.setPrefSize(500, 60);
-        this.setStyle("-fx-background-color: #F0F8FF;");
-        this.setSpacing(30);
-
-        Text titleText = new Text("Recipe List"); // Text of the Header
-        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
-        this.setAlignment(Pos.CENTER); // Align the text to the Center
-
-        // Add Recipe button
-        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
-        addRecipeButton = new Button("Add Recipe");
-        addRecipeButton.setStyle(defaultButtonStyle);
-
-        restoreRecipes = new Button("Restore recipes");
-        restoreRecipes.setStyle(defaultButtonStyle);
-
-        this.getChildren().addAll(titleText, addRecipeButton);
-        // this.getChildren().add(restoreRecipes);
-    }
-
-    public Button getAddButton() {
-        return addRecipeButton;
-    }
-
-    public Button getAddRecipeButton() {
-        return addRecipeButton;
-    }
-
-    public Button getRestoreButton() {
-        return restoreRecipes;
-    }
-}
-
-/**
- * Main window layout
- */
-public class MainWindow extends BorderPane {
-    private MainWindowHeader mainWindowHeader; // header section
-    private RecipeList recipeList;
-    private ScrollPane scrollPane;
-
-    public MainWindow(UserSession userSession) {
-        mainWindowHeader = new MainWindowHeader();
-        recipeList = new RecipeList(userSession);
-
-        scrollPane = new ScrollPane(recipeList);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
-
-        // Add header to the top of the BorderPane
-        this.setTop(mainWindowHeader);
-        // Add scroller to the centre of the BorderPane
-        this.setCenter(scrollPane);
-    }
-
-    public MainWindowHeader getHeader() {
-        return mainWindowHeader;
-    }
-
-    public RecipeList getRecipeList() {
-        return recipeList;
-    }
-}
 
 /**
  * A Recipe in RecipeList (App display)
@@ -97,6 +32,8 @@ class RecipeBox extends HBox {
     private String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
     private Button deleteButton;
 
+    
+
     RecipeBox(String title, UserSession userSession) {
         // this.setPrefSize(1140, 50);
 
@@ -104,6 +41,7 @@ class RecipeBox extends HBox {
         this.title = new Button();
         this.title.setPrefSize(800, 50);
         this.title.setText(title);
+       
         this.title.setStyle(defaultButtonStyle);
         this.getChildren().add(this.title);
 
@@ -129,7 +67,7 @@ class RecipeBox extends HBox {
 
         // Creates a new RecipeDetailsView window using selected recipe
         this.title.setOnAction(e -> {
-            Recipe recipe = getRecipeByTitle(title);
+            Recipe recipe = getRecipeByTitle(this.title.getText());
             if (recipe != null) {
                 ViewWindow recipeDetailsView = new ViewWindow(recipe, this.title.getScene(), userSession);
                 Scene recipeDetailsScene = new Scene(recipeDetailsView, 500, 400);
@@ -150,7 +88,6 @@ class RecipeBox extends HBox {
             }
         });
     }
-
     private Recipe getRecipeByTitle(String title) {
         for (Recipe recipe : PantryPal.recipeStorage) {
             if (recipe.getTitle().equals(title)) {
@@ -159,23 +96,8 @@ class RecipeBox extends HBox {
         }
         return null;
     }
-}
-
-/**
- * The main recipe list displayed in app.
- */
-class RecipeList extends VBox {
-    private UserSession userSession;
-
-    RecipeList(UserSession userSession) {
-        this.userSession = userSession;
-        this.setSpacing(5); // sets spacing between recipes
-        this.setPrefSize(1440, 560);
-        this.setStyle("-fx-background-color: #F0F8FF;");
+     public void replaceRecipe(String title){
+            this.title.setText(title);
     }
-
-    // Adds a single recipe to the main list given the title of recipe
-    public void addRecipe(String title) {
-        this.getChildren().add(0, new RecipeBox(title, userSession)); // add new recipe to top of list
-    }
+   
 }

@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import javafx.application.Platform;
 import javafx.scene.control.TextField;
+import project.Server.ChatAPI;
+import project.Server.Recipe;
 
 import static org.junit.jupiter.api.Assertions.*;
 

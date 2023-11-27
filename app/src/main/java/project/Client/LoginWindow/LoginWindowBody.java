@@ -1,4 +1,4 @@
-package project;
+package project.Client.LoginWindow;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,64 +13,20 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import project.Client.MainWindow.RecipeList;
+import project.Database.MongoDBClient;
+import project.Database.UserAuthentication;
+import project.Database.UserSession;
+import project.Server.Recipe;
+
 import java.util.*;
 
-public class LoginWindow extends BorderPane {
-    private LoginWindowHeader header;
-    private LoginWindowBody body;
-
-    public LoginWindow(Stage primaryStage, Scene targScene, UserSession userSession, RecipeList recipeList,
-            List<Recipe> recipeStorage) {
-        header = new LoginWindowHeader();
-        body = new LoginWindowBody(primaryStage, targScene, userSession, recipeList, recipeStorage);
-
-        this.setTop(header);
-        this.setCenter(body);
-    }
-
-    public LoginWindowHeader getLoginWindowHeader() {
-        return header;
-    }
-
-    public LoginWindowBody getLoginWindowBody() {
-        return body;
-    }
-}
-
-class LoginWindowHeader extends HBox {
-    private Text titleText;
-    private Button returnButton;
-
-    LoginWindowHeader() {
-        // Set header appearance
-        this.setPrefSize(500, 60);
-        this.setStyle("-fx-background-color: #F0F8FF;");
-        this.setSpacing(30);
-
-        titleText = new Text("Login"); // Text of the Header
-        titleText.setFont(new Font(20));
-        this.setAlignment(Pos.CENTER); // Align the text to the Center
-
-        returnButton = new Button("Return");
-
-        this.getChildren().addAll(titleText, returnButton);
-    }
-
-    public Text getTitleText() {
-        return titleText;
-    }
-
-    public Button getReturnButton() {
-        return returnButton;
-    }
-}
-
-class LoginWindowBody extends VBox {
+public class LoginWindowBody extends VBox {
     private TextField usernameField;
     private PasswordField passwordField;
     private Button loginButton;
 
-    LoginWindowBody(Stage primaryStage, Scene targetScene, UserSession userSession, RecipeList recipeList,
+    public LoginWindowBody(Stage primaryStage, Scene targetScene, UserSession userSession, RecipeList recipeList,
             List<Recipe> recipeStorage) {
         this.setStyle("-fx-background-color: #F0F8FF;");
         usernameField = new TextField();

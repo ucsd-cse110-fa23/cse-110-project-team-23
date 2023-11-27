@@ -26,10 +26,6 @@ javafx {
 dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
-
-    // This dependency is used by the application.
-    implementation 'com.google.guava:guava:31.1-jre'
-
     implementation 'org.openjfx:javafx-controls:19'
     implementation 'org.openjfx:javafx-fxml:19'
     implementation 'org.json:json:20171018'

@@ -3,6 +3,19 @@ package project;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.stage.Stage;
+import project.Client.AddWindow.AddWindow;
+import project.Client.AddWindow.AddWindowBody;
+import project.Client.CreateAccountWindow.CreateAccountWindow;
+import project.Client.LoginWindow.LoginWindow;
+import project.Client.MainWindow.MainWindow;
+import project.Client.MainWindow.RecipeList;
+import project.Client.OpenAppWindow.OpenAppWindow;
+import project.Client.SuggestWindow.SuggestWindow;
+import project.Client.SuggestWindow.SuggestWindowBody;
+import project.Database.MongoDBClient;
+import project.Database.UserSession;
+import project.Server.ChatAPI;
+import project.Server.Recipe;
 import javafx.scene.Scene;
 import javafx.scene.text.*;
 import javafx.scene.layout.*;
@@ -25,7 +38,7 @@ import java.util.*;
 public class PantryPal extends Application {
     public static List<Recipe> recipeStorage;
     private UserSession userSession;
-
+    public static MainWindow mainWindow;
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Initialize new user session
@@ -36,7 +49,7 @@ public class PantryPal extends Application {
         // File storageCSV = new File("recipes.csv");
 
         // Setting the layout of the MainWindow
-        MainWindow mainWindow = new MainWindow(userSession);
+        mainWindow = new MainWindow(userSession);
         Scene mainScene = new Scene(mainWindow, 800, 400);
 
         // Setting OpenAppWindow
