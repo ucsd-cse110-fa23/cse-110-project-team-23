@@ -1,13 +1,8 @@
-package server;
+package project.Server;
 import com.sun.net.httpserver.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-
-
-    
-
-
 
 public class MyHandler implements HttpHandler {
     public MyHandler(){

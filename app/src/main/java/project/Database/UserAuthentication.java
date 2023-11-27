@@ -1,4 +1,4 @@
-package project;
+package project.Database;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.set;

@@ -1,4 +1,4 @@
-package project;
+package project.Server;
 
 public class Recipe {
     private String title;
