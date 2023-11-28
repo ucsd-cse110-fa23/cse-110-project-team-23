@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import javafx.application.Platform;
 import javafx.scene.control.TextField;
+import project.Client.MainWindow.MainWindow;
+import project.Client.MainWindow.MainWindowHeader;
 import project.Database.MockUserAuthentication;
 import project.Server.ChatAPI;
 import project.Server.MockChatAPI;
@@ -24,7 +26,10 @@ public class PantryPalTests {
     String description = "Raw";
     String mealType = "Breakfast";
     int startSize;
-    PantryPal pantryPal;
+    ArrayList<Recipe> mockRecipeStorage;
+    ArrayList<Recipe> alphaSort;
+    ArrayList<Recipe> oldSort;
+    ArrayList<Recipe> newSort;
     private static final String AUDIO_FILE_PATH = "recording.wav";
 
     @BeforeEach
@@ -36,6 +41,21 @@ public class PantryPalTests {
         PantryPal.recipeStorage = new ArrayList<>();
         Recipe testRecipe = new Recipe(title, description, mealType);
         PantryPal.recipeStorage.add(testRecipe);
+
+        mockRecipeStorage = new ArrayList<>();
+        Recipe sortRecipe1 = new Recipe("Chicken", "Cooked chicken", "Dinner");
+        Recipe sortRecipe2 = new Recipe("Orange chicken","null","Dinner");
+        Recipe sortRecipe3 = new Recipe("Apple","raw","Lunch");
+        mockRecipeStorage.add(sortRecipe1);
+        mockRecipeStorage.add(sortRecipe2);
+        mockRecipeStorage.add(sortRecipe3);
+
+        alphaSort = new ArrayList<Recipe>();
+        oldSort = new ArrayList<>();
+        newSort = new ArrayList<>();
+        alphaSort.add(sortRecipe3); alphaSort.add(sortRecipe1); alphaSort.add(sortRecipe2);
+        oldSort.add(sortRecipe1); oldSort.add(sortRecipe2); oldSort.add(sortRecipe3);
+        newSort.add(sortRecipe3); newSort.add(sortRecipe2); newSort.add(sortRecipe1);
     }
 
     @Test
@@ -164,6 +184,24 @@ public class PantryPalTests {
         assertEquals(expectedString, result); // Check if the logged JSON matches the expected JSON
     }
 
+    @Test
+    public void testSortAlpha(){
+       ArrayList<Recipe> afterSort = MainWindowHeader.sortAlpha(mockRecipeStorage);
+       assertEquals(alphaSort, afterSort);
+    } 
+
+    @Test
+    public void testSortNew(){
+        ArrayList<Recipe> afterSort = MainWindowHeader.sortNew(mockRecipeStorage);
+       assertEquals(newSort, afterSort);
+    }
+
+    @Test
+    public void testSortOld(){
+        ArrayList<Recipe> afterSort = MainWindowHeader.sortOld(mockRecipeStorage);
+       assertEquals(oldSort, afterSort);
+    }
+
     // @Test
     // void testTranscribeAudio() throws InterruptedException {
     // Platform.startup(() -> {
@@ -179,5 +217,4 @@ public class PantryPalTests {
     // assertNotNull(transcribedText);
     // assertFalse(transcribedText.isEmpty());
     // }
-
 }
