@@ -4,14 +4,18 @@ import org.junit.jupiter.api.Test;
 
 import javafx.application.Platform;
 import javafx.scene.control.TextField;
+import project.Database.MockUserAuthentication;
 import project.Server.ChatAPI;
+import project.Server.MockChatAPI;
 import project.Server.Recipe;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -111,6 +115,53 @@ public class PantryPalTests {
 
         }
 
+    }
+
+    @Test
+    public void testCreateAccount() {
+        MockUserAuthentication mockAuth = new MockUserAuthentication("testUser", "testPassword");
+        assertTrue(mockAuth.createAccount());
+    }
+
+    @Test
+    public void testCreateAccountAlreadyExists() {
+        MockUserAuthentication mockAuth = new MockUserAuthentication(MockUserAuthentication.MOCK_USERNAME,
+                MockUserAuthentication.MOCK_PASSWORD);
+        assertFalse(mockAuth.createAccount());
+    }
+
+    @Test
+    public void testLoginSuccessful() {
+        MockUserAuthentication mockAuth = new MockUserAuthentication(MockUserAuthentication.MOCK_USERNAME,
+                MockUserAuthentication.MOCK_PASSWORD);
+        assertEquals(1, mockAuth.login());
+    }
+
+    @Test
+    public void testLoginFailed() {
+        MockUserAuthentication mockAuth = new MockUserAuthentication("wrongUser", "wrongPassword");
+        assertEquals(3, mockAuth.login());
+    }
+
+    @Test
+    public void testSuggestRecipe() {
+        // Given
+        String instruction = "test ingredients";
+        MockChatAPI mockChatAPI = new MockChatAPI(instruction);
+
+        // When
+        String result = mockChatAPI.suggestRecipe();
+
+        // Then
+        // Define the expected JSON object for comparison
+        JSONObject expectedJson = new JSONObject();
+        expectedJson.put("model", "text-davinci-003");
+        expectedJson.put("prompt", "test ingredients");
+        expectedJson.put("max_tokens", 200);
+        expectedJson.put("temperature", 1.0);
+        String expectedString = expectedJson.toString();
+
+        assertEquals(expectedString, result); // Check if the logged JSON matches the expected JSON
     }
 
     // @Test

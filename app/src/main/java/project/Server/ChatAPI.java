@@ -10,10 +10,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ChatAPI {
-    private static final String API_ENDPOINT = "https://api.openai.com/v1/completions";
-    private static final String API_KEY = "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";
-    private static final String MODEL = "text-davinci-003";
-    private String instruction;
+    protected static final String API_ENDPOINT = "https://api.openai.com/v1/completions";
+    protected static final String API_KEY = "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";
+    protected static final String MODEL = "text-davinci-003";
+    protected String instruction;
 
     public ChatAPI(String instruction) {
         this.instruction = instruction;

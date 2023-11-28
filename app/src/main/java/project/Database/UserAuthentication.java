@@ -23,8 +23,8 @@ import ch.qos.logback.classic.LoggerContext;
 
 public class UserAuthentication {
     private static final String uri = "mongodb://asandoval2313:tTr2Pnu0ZiQ2pJuo@ac-hfcmrm5-shard-00-00.gixdies.mongodb.net:27017,ac-hfcmrm5-shard-00-01.gixdies.mongodb.net:27017,ac-hfcmrm5-shard-00-02.gixdies.mongodb.net:27017/?ssl=true&replicaSet=atlas-dzpzxt-shard-0&authSource=admin&retryWrites=true&w=majority";
-    private String username;
-    private String password;
+    protected String username;
+    protected String password;
 
     public UserAuthentication(String username, String password) {
         this.username = username;
