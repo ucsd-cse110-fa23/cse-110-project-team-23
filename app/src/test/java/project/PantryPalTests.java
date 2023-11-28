@@ -145,15 +145,14 @@ public class PantryPalTests {
 
     @Test
     public void testSuggestRecipe() {
-        // Given
+ 
         String instruction = "test ingredients";
         MockChatAPI mockChatAPI = new MockChatAPI(instruction);
 
-        // When
+
         String result = mockChatAPI.suggestRecipe();
 
-        // Then
-        // Define the expected JSON object for comparison
+
         JSONObject expectedJson = new JSONObject();
         expectedJson.put("model", "text-davinci-003");
         expectedJson.put("prompt", "test ingredients");
@@ -161,7 +160,7 @@ public class PantryPalTests {
         expectedJson.put("temperature", 1.0);
         String expectedString = expectedJson.toString();
 
-        assertEquals(expectedString, result); // Check if the logged JSON matches the expected JSON
+        assertEquals(expectedString, result); 
     }
 
         @Test
