@@ -77,27 +77,20 @@ public class MainWindowHeader extends HBox {
     }
 
     public void performAction(String sortAction) {
-        RecipeList recipeList = PantryPal.mainWindow.getRecipeList();
-        ArrayList<Recipe> list = new ArrayList<>();
-
         if (sortAction.equals("Latest (default)")) {
-            list = sortNew(PantryPal.recipeStorage);
+            sortNew();
         } else if (sortAction.equals("Oldest")) {
-            list = sortOld(PantryPal.recipeStorage);
+            sortOld();
         } else if (sortAction.equals("A-Z")) {
-            list = sortAlpha(PantryPal.recipeStorage);
-        }
-
-        for (int i = 0; i < list.size(); i++){
-            ((RecipeBox) recipeList.getChildren().get(i)).replaceRecipe(list.get(i).getTitle());
+            sortAlpha();
         }
     }
 
-
-    public static ArrayList<Recipe> sortAlpha(ArrayList<Recipe> recipeStorage) {
+    public void sortAlpha() {
         ArrayList<Recipe> list = new ArrayList<>();
-        for (int i = 0; i < recipeStorage.size(); i++){
-            Recipe recipe = recipeStorage.get(i);
+        RecipeList recipeList = PantryPal.mainWindow.getRecipeList();
+        for (int i = 0; i < PantryPal.recipeStorage.size(); i++){
+            Recipe recipe = PantryPal.recipeStorage.get(i);
             list.add(recipe);
         }
         Collections.sort(list, new Comparator<Recipe>() {
@@ -121,19 +114,27 @@ public class MainWindowHeader extends HBox {
                 return 0;
             }
         });
-        return list;
-    }
-
-    public static ArrayList<Recipe> sortOld(ArrayList<Recipe> recipeStorage) {
-        return recipeStorage;
-    }
-
-    public static ArrayList<Recipe> sortNew(ArrayList<Recipe> recipeStorage) {
-        ArrayList<Recipe> list = new ArrayList<>();
-        for (int i = recipeStorage.size() - 1; i >= 0; i--) {
-            list.add(recipeStorage.get(i));
+        for (int i = 0; i < list.size(); i++){
+            ((RecipeBox) recipeList.getChildren().get(i)).replaceRecipe(list.get(i).getTitle());
         }
-        return list;
+    }
+
+    public void sortOld() {
+        RecipeList recipeList = PantryPal.mainWindow.getRecipeList();
+        for (int i = 0; i < PantryPal.recipeStorage.size(); i++) {
+            ((RecipeBox) recipeList.getChildren().get(i)).replaceRecipe(PantryPal.recipeStorage.get(i).getTitle());
+            System.out.println(PantryPal.recipeStorage.get(i).getTitle());
+        }
+    }
+
+    public void sortNew() {
+        RecipeList recipeList = PantryPal.mainWindow.getRecipeList();
+        int inc = 0;
+        for (int i = PantryPal.recipeStorage.size()-1; i >= 0; i--) {
+            ((RecipeBox) recipeList.getChildren().get(inc)).replaceRecipe(PantryPal.recipeStorage.get(i).getTitle());
+            inc++;
+            System.out.println(PantryPal.recipeStorage.get(i).getTitle());
+        }
     }
 
     // public void sortAlphabetically(List <Recipe> recipes) {

@@ -36,7 +36,7 @@ import java.util.*;
  */
 
 public class PantryPal extends Application {
-    public static ArrayList<Recipe> recipeStorage;
+    public static List<Recipe> recipeStorage;
     private UserSession userSession;
     public static MainWindow mainWindow;
     @Override
@@ -45,7 +45,7 @@ public class PantryPal extends Application {
         userSession = UserSession.getInstance();
 
         // Initiate recipe storage
-        recipeStorage = new ArrayList<Recipe>();
+        recipeStorage = new ArrayList<>();
         // File storageCSV = new File("recipes.csv");
 
         // Setting the layout of the MainWindow
