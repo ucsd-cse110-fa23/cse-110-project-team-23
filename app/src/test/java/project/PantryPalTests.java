@@ -10,7 +10,8 @@ import project.Server.MockChatAPI;
 import project.Server.Recipe;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+import project.Client.MainWindow.MainWindow;
+import project.Client.MainWindow.MainWindowHeader;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,6 +26,10 @@ public class PantryPalTests {
     String mealType = "Breakfast";
     int startSize;
     PantryPal pantryPal;
+    ArrayList<Recipe> mockRecipeStorage;
+    ArrayList<Recipe> alphaSort;
+    ArrayList<Recipe> oldSort;
+    ArrayList<Recipe> newSort;
     private static final String AUDIO_FILE_PATH = "recording.wav";
 
     @BeforeEach
@@ -36,6 +41,20 @@ public class PantryPalTests {
         PantryPal.recipeStorage = new ArrayList<>();
         Recipe testRecipe = new Recipe(title, description, mealType);
         PantryPal.recipeStorage.add(testRecipe);
+
+        mockRecipeStorage = new ArrayList<>();
+        Recipe sortRecipe1 = new Recipe("Chicken", "Cooked chicken", "Dinner");
+        Recipe sortRecipe2 = new Recipe("Orange chicken","null","Dinner");
+        Recipe sortRecipe3 = new Recipe("Apple","raw","Lunch");
+        mockRecipeStorage.add(sortRecipe1);
+        mockRecipeStorage.add(sortRecipe2);
+        mockRecipeStorage.add(sortRecipe3);
+        alphaSort = new ArrayList<Recipe>();
+        oldSort = new ArrayList<Recipe>();
+        newSort = new ArrayList<Recipe>();
+        alphaSort.add(sortRecipe3); alphaSort.add(sortRecipe1); alphaSort.add(sortRecipe2);
+        oldSort.add(sortRecipe1); oldSort.add(sortRecipe2); oldSort.add(sortRecipe3);
+        newSort.add(sortRecipe3); newSort.add(sortRecipe2); newSort.add(sortRecipe1);
     }
 
     @Test
@@ -186,5 +205,23 @@ public class PantryPalTests {
         assertNotEquals(initialResult, refreshedResult);
     }
 
+
+    @Test
+    public void testSortAlpha(){
+       ArrayList<Recipe> afterSort = MainWindowHeader.sortAlpha(mockRecipeStorage);
+       assertEquals(alphaSort, afterSort);
+    } 
+
+    @Test
+    public void testSortNew(){
+        ArrayList<Recipe> afterSort = MainWindowHeader.sortNew(mockRecipeStorage);
+       assertEquals(newSort, afterSort);
+    }
+
+    @Test
+    public void testSortOld(){
+        ArrayList<Recipe> afterSort = MainWindowHeader.sortOld(mockRecipeStorage);
+       assertEquals(oldSort, afterSort);
+    }
 
 }
