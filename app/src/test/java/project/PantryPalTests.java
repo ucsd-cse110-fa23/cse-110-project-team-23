@@ -145,15 +145,14 @@ public class PantryPalTests {
 
     @Test
     public void testSuggestRecipe() {
-        // Given
+ 
         String instruction = "test ingredients";
         MockChatAPI mockChatAPI = new MockChatAPI(instruction);
 
-        // When
+
         String result = mockChatAPI.suggestRecipe();
 
-        // Then
-        // Define the expected JSON object for comparison
+
         JSONObject expectedJson = new JSONObject();
         expectedJson.put("model", "text-davinci-003");
         expectedJson.put("prompt", "test ingredients");
@@ -161,23 +160,31 @@ public class PantryPalTests {
         expectedJson.put("temperature", 1.0);
         String expectedString = expectedJson.toString();
 
-        assertEquals(expectedString, result); // Check if the logged JSON matches the expected JSON
+        assertEquals(expectedString, result); 
     }
 
-    // @Test
-    // void testTranscribeAudio() throws InterruptedException {
-    // Platform.startup(() -> {
-    // });
-    // TextField textField = new TextField();
+        @Test
+    public void refreshrecipe() {
 
-    // WhisperAPI whisperAPI = new WhisperAPI(AUDIO_FILE_PATH, textField);
+        String initialInstruction = "test ingredients";
+        MockChatAPI mockChatAPI = new MockChatAPI(initialInstruction);
 
-    // whisperAPI.transcribeAudio();
-    // Thread.sleep(5000);
+        String initialResult = mockChatAPI.suggestRecipe();
 
-    // String transcribedText = textField.getText();
-    // assertNotNull(transcribedText);
-    // assertFalse(transcribedText.isEmpty());
-    // }
+
+        JSONObject expectedInitialJson = new JSONObject();
+        expectedInitialJson.put("model", "text-davinci-003");
+        expectedInitialJson.put("prompt", "test ingredients");
+        expectedInitialJson.put("max_tokens", 200);
+        expectedInitialJson.put("temperature", 1.0);
+        String expectedInitialString = expectedInitialJson.toString();
+
+        assertEquals(expectedInitialString, initialResult);
+
+        String refreshedResult = mockChatAPI.suggestRecipe();
+
+        assertNotEquals(initialResult, refreshedResult);
+    }
+
 
 }
