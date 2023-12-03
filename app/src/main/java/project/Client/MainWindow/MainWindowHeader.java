@@ -143,7 +143,6 @@ public class MainWindowHeader extends HBox {
     }
 
     private void updateRecipeList(ArrayList<Recipe> list, RecipeList recipelist){
-        
         for(Recipe recipe : list){
             RecipeBox recipeBox = new RecipeBox(recipe.getTitle(), null);
             recipelist.getChildren().add(recipeBox);
