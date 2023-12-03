@@ -10,24 +10,22 @@ public class MockChatAPI extends ChatAPI {
         super(instruction);
     }
 
-
     @Override
     public String suggestRecipe() {
-        
 
         JSONObject requestBody = new JSONObject();
-        requestBody.put("model", MODEL);
+        requestBody.put("model", CHAT_MODEL);
         requestBody.put("prompt", this.instruction);
         requestBody.put("max_tokens", 200);
-        
+
         double temperature;
         int maxtokens;
 
-        if(recipeRefreshed == true){
+        if (recipeRefreshed == true) {
             temperature = 0.9;
             maxtokens = 100;
-        }else{
-            temperature =1.0;
+        } else {
+            temperature = 1.0;
             maxtokens = 200;
         }
         requestBody.put("temperature", temperature);

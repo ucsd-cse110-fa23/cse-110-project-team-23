@@ -56,7 +56,11 @@ public class LoginWindowBody extends VBox {
                     primaryStage.setScene(targetScene);
                     userSession.setUsername(enteredUsername);
                     MongoDBClient mongoClient = new MongoDBClient(userSession.getUsername());
-                    mongoClient.openRecipes(recipeList, recipeStorage);
+                    try {
+                        mongoClient.openRecipes(recipeList, recipeStorage);
+                    } catch (Exception err) {
+                        System.out.println(err);
+                    }
                 } else if (result == 2) {
                     Alert alert = new Alert(AlertType.ERROR);
                     alert.setTitle("Error");

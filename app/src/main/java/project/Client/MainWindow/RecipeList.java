@@ -37,22 +37,24 @@ public class RecipeList extends VBox {
         this.setStyle("-fx-background-color: #F0F8FF;");
     }
 
-    public RecipeList (){
+    public RecipeList() {
         this.setSpacing(5); // sets spacing between recipes
         this.setPrefSize(1440, 560);
         this.setStyle("-fx-background-color: #F0F8FF;");
     }
+
     // Adds a single recipe to the main list given the title of recipe
-    public void addRecipe(String title) {
-        this.getChildren().add(0, new RecipeBox(title, userSession)); // add new recipe to top of list
+    public void addRecipe(String title, String imageURL) {
+        RecipeBox newRecipe = new RecipeBox(title, userSession);
+        newRecipe.setImage(imageURL);
+        this.getChildren().add(0, newRecipe); // add new recipe to top of list
     }
 
-    
-    public void deleteAllRecipe () {
+    public void deleteAllRecipe() {
 
-        for (int i = 0; i < this.getChildren().size(); i++){
+        for (int i = 0; i < this.getChildren().size(); i++) {
             this.getChildren().remove(i);
         }
-        
+
     }
 }

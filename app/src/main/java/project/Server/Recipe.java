@@ -4,11 +4,13 @@ public class Recipe {
     private String title;
     private String description;
     private String mealType;
+    private String imageURL;
 
-    public Recipe(String title, String description, String mealType) {
+    public Recipe(String title, String description, String mealType, String imageURL) {
         this.title = title;
         this.description = description;
         this.mealType = mealType;
+        this.imageURL = imageURL;
     }
 
     public String getTitle() {
@@ -21,6 +23,10 @@ public class Recipe {
 
     public String getMealType() {
         return this.mealType;
+    }
+
+    public String getImageURL() {
+        return this.imageURL;
     }
 
     public void setTitle(String title) {

@@ -10,6 +10,8 @@ import javafx.scene.Scene;
 import javafx.scene.text.*;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.geometry.*;
 import javax.sound.sampled.*;
 import java.io.*;
@@ -24,14 +26,12 @@ import java.util.*;
 public class ViewWindow extends BorderPane {
     private TextArea descriptionTextArea;
     private RecipeViewFooter footer;
+    private RecipeViewHeader header;
 
     public ViewWindow(Recipe recipe, Scene previousScene, UserSession userSession) {
+        header = new RecipeViewHeader(recipe);
         footer = new RecipeViewFooter();
         this.setStyle("-fx-background-color: #F0F8FF;");
-
-        String recipeTitle = recipe.getTitle();
-        Text titleText = new Text(recipeTitle);
-        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
 
         String recipeDescription = recipe.getDescription();
         descriptionTextArea = new TextArea(recipeDescription);
@@ -53,7 +53,7 @@ public class ViewWindow extends BorderPane {
             }
         });
 
-        this.setTop(titleText);
+        this.setTop(header);
         this.setCenter(descriptionTextArea);
         this.setBottom(footer);
         descriptionTextArea.setPrefSize(400, 300);

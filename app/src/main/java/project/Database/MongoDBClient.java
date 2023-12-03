@@ -6,6 +6,8 @@ import static com.mongodb.client.model.Updates.set;
 import java.io.*;
 import java.util.*;
 
+import javax.crypto.spec.ChaCha20ParameterSpec;
+
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -18,6 +20,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.UpdateResult;
 
 import project.Client.MainWindow.RecipeList;
+import project.Server.ChatAPI;
 import project.Server.Recipe;
 
 public class MongoDBClient {
@@ -28,7 +31,7 @@ public class MongoDBClient {
         this.username = username;
     }
 
-    public void insertRecipe(String title, String mealType, String description) {
+    public void insertRecipe(String title, String mealType, String description, String imageURL) {
         try (MongoClient mongoClient = MongoClients.create(uri)) {
             MongoDatabase pantryPal_db = mongoClient.getDatabase("Database");
             MongoCollection<Document> userCollection = pantryPal_db.getCollection(username);
@@ -36,7 +39,8 @@ public class MongoDBClient {
             Document recipeDoc = new Document("_id", new ObjectId());
             recipeDoc.append("title", title)
                     .append("mealType", mealType)
-                    .append("description", description);
+                    .append("description", description)
+                    .append("imageURL", imageURL); // Include imageURL field
             userCollection.insertOne(recipeDoc);
         }
     }
@@ -58,7 +62,7 @@ public class MongoDBClient {
             Document existingRecipe = userCollection.find(query).first();
 
             if (existingRecipe != null) {
-                // Update the description field of the existing recipe
+                // Update the description and imageURL fields of the existing recipe
                 Bson update = set("description", newDescription);
                 UpdateResult updateResult = userCollection.updateOne(query, update);
 
@@ -73,7 +77,8 @@ public class MongoDBClient {
         }
     }
 
-    public void openRecipes(RecipeList recipeList, List<Recipe> recipeStorage) {
+    public void openRecipes(RecipeList recipeList, List<Recipe> recipeStorage)
+            throws IOException, InterruptedException {
         try (MongoClient mongoClient = MongoClients.create(uri)) {
             MongoDatabase pantryPalDb = mongoClient.getDatabase("Database");
 
@@ -89,11 +94,12 @@ public class MongoDBClient {
                 String title = recipeDoc.getString("title");
                 String description = recipeDoc.getString("description");
                 String mealType = recipeDoc.getString("mealType");
+                String imageURL = recipeDoc.getString("imageURL");
 
                 // Create and add a new Recipe object to the recipeList
-                Recipe newRecipe = new Recipe(title, description, mealType);
+                Recipe newRecipe = new Recipe(title, description, mealType, imageURL);
 
-                recipeList.addRecipe(title);
+                recipeList.addRecipe(title, imageURL);
                 recipeStorage.add(newRecipe);
             }
         }
