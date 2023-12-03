@@ -53,7 +53,7 @@ public class MainWindowHeader extends HBox {
         sortComboBox = new ComboBox<>();
         sortComboBox.setPrefSize(150, 20);
         sortComboBox.getItems().addAll("Latest (default)", "Oldest", "A-Z");
-        sortComboBox.getSelectionModel().select("Latest (default)");
+        sortComboBox.getSelectionModel().select("Sort Recipes");
 
         FilterComboBox  = new ComboBox<>();
         FilterComboBox.setPrefSize(150, 20);
@@ -76,7 +76,7 @@ public class MainWindowHeader extends HBox {
         // Add Recipe button
         addRecipeButton = new Button("Add Recipe");
 
-        this.getChildren().addAll(titleText, FilterComboBox, sortComboBox, applyButton, addRecipeButton);
+        this.getChildren().addAll( sortComboBox, applyButton,  titleText, FilterComboBox, addRecipeButton);
 
         
     }
@@ -98,7 +98,7 @@ public class MainWindowHeader extends HBox {
         RecipeList recipeList = PantryPal.mainWindow.getRecipeList();
         ArrayList<Recipe> list = filterByMealType(FilterComboBox.getValue());
         ArrayList<Recipe> sortedList;
-        if (sortAction.equals("Latest (default)")) {
+        if (sortAction.equals("Latest (default)")|| sortAction.equals("Sort Recipes")) {
             sortedList = sortNew(list);
         } else if (sortAction.equals("Oldest")) {
             sortedList = sortOld(list);
@@ -118,7 +118,7 @@ public class MainWindowHeader extends HBox {
        RecipeList recipeList = PantryPal.mainWindow.getRecipeList();
        recipeList.getChildren().clear();
        ArrayList<Recipe> list;
-        if(selectedMealType.equals("Default")){
+        if(selectedMealType.equals("Default")|| selectedMealType.equals("Filter Meal Type")){
              list = PantryPal.recipeStorage;
             updateRecipeList(list, recipeList);
             return list;
@@ -144,7 +144,7 @@ public class MainWindowHeader extends HBox {
 
     private void updateRecipeList(ArrayList<Recipe> list, RecipeList recipelist){
         
-        for(Recipe recipe: list){
+        for(Recipe recipe : list){
             RecipeBox recipeBox = new RecipeBox(recipe.getTitle(), null);
             recipelist.getChildren().add(recipeBox);
         }
@@ -186,7 +186,6 @@ public class MainWindowHeader extends HBox {
 
     public static ArrayList<Recipe> sortAlpha(ArrayList<Recipe> recipeStorage) {
         ArrayList<Recipe> list = new ArrayList<>();
-
        for (int i = 0; i < recipeStorage.size(); i++){
          Recipe recipe = recipeStorage.get(i);
            list.add(recipe);
