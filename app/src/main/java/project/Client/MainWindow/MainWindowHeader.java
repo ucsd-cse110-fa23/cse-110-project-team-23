@@ -17,6 +17,8 @@ import javax.sound.sampled.*;
 import java.io.*;
 import java.net.*;
 import org.json.*;
+import java.util.function.Predicate;
+import ch.qos.logback.core.filter.Filter;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import java.util.ArrayList;
@@ -33,6 +35,9 @@ public class MainWindowHeader extends HBox {
     private Button restoreRecipes;
     private ComboBox<String> sortComboBox;
     private Button applyButton;
+    private ComboBox<String> FilterComboBox;
+
+
 
     public MainWindowHeader() {
         // Set Header appearance
@@ -48,19 +53,32 @@ public class MainWindowHeader extends HBox {
         sortComboBox = new ComboBox<>();
         sortComboBox.setPrefSize(150, 20);
         sortComboBox.getItems().addAll("Latest (default)", "Oldest", "A-Z");
-        sortComboBox.getSelectionModel().select("Latest (default)");
+        sortComboBox.getSelectionModel().select("Sort Recipes");
+
+        FilterComboBox  = new ComboBox<>();
+        FilterComboBox.setPrefSize(150, 20);
+        FilterComboBox.getItems().addAll("Default", "Breakfast", "Lunch", "Dinner");
+        FilterComboBox.getSelectionModel().select("Filter Meal Type");
+
+        FilterComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+                filterByMealType(newValue);
+        });
 
         // Apply sort/filter button
         applyButton = new Button("Apply");
         applyButton.setOnAction(e -> {
             performAction(sortComboBox.getValue());
+
         });
+
 
 
         // Add Recipe button
         addRecipeButton = new Button("Add Recipe");
 
-        this.getChildren().addAll(titleText, sortComboBox, applyButton, addRecipeButton);
+        this.getChildren().addAll( sortComboBox, applyButton,  titleText, FilterComboBox, addRecipeButton);
+
+        
     }
 
     // getMethod for each defined varaible
@@ -78,28 +96,100 @@ public class MainWindowHeader extends HBox {
 
     public void performAction(String sortAction) {
         RecipeList recipeList = PantryPal.mainWindow.getRecipeList();
-        ArrayList<Recipe> list = new ArrayList<>();
-
-        if (sortAction.equals("Latest (default)")) {
-            list = sortNew(PantryPal.recipeStorage);
+        ArrayList<Recipe> list = filterByMealType(FilterComboBox.getValue());
+        ArrayList<Recipe> sortedList;
+        if (sortAction.equals("Latest (default)")|| sortAction.equals("Sort Recipes")) {
+            sortedList = sortNew(list);
         } else if (sortAction.equals("Oldest")) {
-            list = sortOld(PantryPal.recipeStorage);
+            sortedList = sortOld(list);
+            
         } else if (sortAction.equals("A-Z")) {
-            list = sortAlpha(PantryPal.recipeStorage);
+            sortedList = sortAlpha(list);
         }
+        else{
+            sortedList = list;
+        }
+        recipeList.getChildren().clear();
+        updateRecipeList(sortedList, recipeList);
+        ;
+    }
 
-        for (int i = 0; i < list.size(); i++){
-            ((RecipeBox) recipeList.getChildren().get(i)).replaceRecipe(list.get(i).getTitle());
+    public ArrayList<Recipe> filterByMealType(String selectedMealType){
+       RecipeList recipeList = PantryPal.mainWindow.getRecipeList();
+       recipeList.getChildren().clear();
+       ArrayList<Recipe> list;
+        if(selectedMealType.equals("Default")|| selectedMealType.equals("Filter Meal Type")){
+             list = PantryPal.recipeStorage;
+            updateRecipeList(list, recipeList);
+            return list;
         }
+        if (selectedMealType.equals("Breakfast")) {
+            list = FilterbyBreakfast(PantryPal.recipeStorage);
+            updateRecipeList(list, recipeList);
+            return list;
+        } else if (selectedMealType.equals("Lunch")) {
+            list = FilterbyLunch(PantryPal.recipeStorage);
+            updateRecipeList(list, recipeList);
+            return list;
+        } else if (selectedMealType.equals("Dinner")) {
+            list  = FilterbyDinner(PantryPal.recipeStorage);
+           updateRecipeList(list, recipeList);
+           return list;
+        }
+        else{
+            return null;
+        }
+        
+    }
+
+    private void updateRecipeList(ArrayList<Recipe> list, RecipeList recipelist){
+        for(Recipe recipe : list){
+            RecipeBox recipeBox = new RecipeBox(recipe.getTitle(), null);
+            recipelist.getChildren().add(recipeBox);
+        }
+    }
+
+    public static ArrayList<Recipe> FilterbyBreakfast(ArrayList<Recipe> recipeStorage){
+        ArrayList<Recipe> list = new ArrayList<>();
+        for (int i = 0; i < recipeStorage.size(); i++){
+            Recipe recipe = recipeStorage.get(i);
+            if(recipe.getMealType().toLowerCase().contains("breakfast")){
+            list.add(recipe);
+            }
+        }
+        return list; 
+    }
+
+        public static ArrayList<Recipe> FilterbyLunch(ArrayList<Recipe> recipeStorage){
+        ArrayList<Recipe> list = new ArrayList<>();
+        for (int i = 0; i < recipeStorage.size(); i++){
+            Recipe recipe = recipeStorage.get(i);
+            if(recipe.getMealType().toLowerCase().contains("lunch")){
+            list.add(recipe);
+            }
+        }
+        return list; 
+    }
+
+    public static ArrayList<Recipe> FilterbyDinner(ArrayList<Recipe> recipeStorage){
+        ArrayList<Recipe> list = new ArrayList<>();
+        for (int i = 0; i < recipeStorage.size(); i++){
+            Recipe recipe = recipeStorage.get(i);
+            if(recipe.getMealType().toLowerCase().contains("dinner")){
+            list.add(recipe);
+            }
+        }
+        return list; 
     }
 
 
     public static ArrayList<Recipe> sortAlpha(ArrayList<Recipe> recipeStorage) {
         ArrayList<Recipe> list = new ArrayList<>();
-        for (int i = 0; i < recipeStorage.size(); i++){
-            Recipe recipe = recipeStorage.get(i);
-            list.add(recipe);
-        }
+       for (int i = 0; i < recipeStorage.size(); i++){
+         Recipe recipe = recipeStorage.get(i);
+           list.add(recipe);
+       }
+
         Collections.sort(list, new Comparator<Recipe>() {
 	        public int compare(Recipe t1, Recipe t2) {
                 String s1 = t1.getTitle();
@@ -129,10 +219,11 @@ public class MainWindowHeader extends HBox {
     }
 
     public static ArrayList<Recipe> sortNew(ArrayList<Recipe> recipeStorage) {
-        ArrayList<Recipe> list = new ArrayList<>();
-        for (int i = recipeStorage.size() - 1; i >= 0; i--) {
+        ArrayList<Recipe> list = new ArrayList<>(recipeStorage.size());
+            for (int i = recipeStorage.size() - 1; i >= 0; i--) {
             list.add(recipeStorage.get(i));
         }
+ 
         return list;
     }
 
