@@ -99,16 +99,15 @@ public class MainWindowHeader extends HBox {
         ArrayList<Recipe> list = filterByMealType(FilterComboBox.getValue());
         ArrayList<Recipe> sortedList;
         if (sortAction.equals("Latest (default)")) {
-            sortedList = sortNew(PantryPal.recipeStorage);
+            sortedList = sortNew(list);
         } else if (sortAction.equals("Oldest")) {
-            sortedList = sortOld(PantryPal.recipeStorage);
+            sortedList = sortOld(list);
             
         } else if (sortAction.equals("A-Z")) {
-            sortedList = sortAlpha(PantryPal.recipeStorage);
+            sortedList = sortAlpha(list);
         }
         else{
             sortedList = list;
-
         }
         recipeList.getChildren().clear();
         updateRecipeList(sortedList, recipeList);
@@ -122,18 +121,25 @@ public class MainWindowHeader extends HBox {
         if(selectedMealType.equals("Default")){
              list = PantryPal.recipeStorage;
             updateRecipeList(list, recipeList);
+            return list;
         }
         if (selectedMealType.equals("Breakfast")) {
             list = FilterbyBreakfast(PantryPal.recipeStorage);
             updateRecipeList(list, recipeList);
+            return list;
         } else if (selectedMealType.equals("Lunch")) {
             list = FilterbyLunch(PantryPal.recipeStorage);
             updateRecipeList(list, recipeList);
+            return list;
         } else if (selectedMealType.equals("Dinner")) {
             list  = FilterbyDinner(PantryPal.recipeStorage);
            updateRecipeList(list, recipeList);
+           return list;
         }
-        return null;
+        else{
+            return null;
+        }
+        
     }
 
     private void updateRecipeList(ArrayList<Recipe> list, RecipeList recipelist){
