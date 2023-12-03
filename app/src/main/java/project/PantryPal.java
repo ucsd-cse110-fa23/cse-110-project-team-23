@@ -39,6 +39,7 @@ public class PantryPal extends Application {
     public static ArrayList<Recipe> recipeStorage;
     private UserSession userSession;
     public static MainWindow mainWindow;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Initialize new user session
@@ -73,7 +74,7 @@ public class PantryPal extends Application {
         SuggestWindow suggestWindow = new SuggestWindow();
         Scene suggestScene = new Scene(suggestWindow);
 
-        String[] originalIngredients = {""};
+        String[] originalIngredients = { "" };
 
         SuggestWindowBody suggestWindowBody = suggestWindow.getSuggestWindowBody();
         Button confirmButton = suggestWindowBody.getConfirmButton();
@@ -92,6 +93,10 @@ public class PantryPal extends Application {
                     String instructionString = "meal type: " + mealType + " Ingredients: " + ingredients;
                     ChatAPI instruction = new ChatAPI(instructionString);
                     String suggestedrecipe = instruction.suggestRecipe();
+                    int recipeTitleIdx = suggestedrecipe.indexOf("Recipe Title:");
+                    int mealTypeIdx = suggestedrecipe.indexOf("Meal Type:");
+                    String parsedTitle = suggestedrecipe.substring(recipeTitleIdx + 14, mealTypeIdx).trim();
+                    String imgURL = instruction.generateRecipeImage(parsedTitle);
                     double height = primaryStage.getHeight();
                     double width = primaryStage.getWidth();
                     boolean fullscreen = primaryStage.isFullScreen();
@@ -104,6 +109,7 @@ public class PantryPal extends Application {
                     }
 
                     suggestWindow.getSuggestWindowBody().clear();
+                    addWindow.getAddWindowBody().setImageURL(imgURL);
                     addWindow.getAddWindowBody().setRecipe(suggestedrecipe);
                     originalIngredients[0] = ingredients;
                 } catch (IOException | InterruptedException ex) {
@@ -194,14 +200,15 @@ public class PantryPal extends Application {
             String title = addWindowBody.getTitle();
             String description = addWindowBody.getDescription();
             String mealType = addWindowBody.getMealType();
-            Recipe newRecipe = new Recipe(title, description, mealType);
+            String imageURL = addWindowBody.getImageURL();
+            Recipe newRecipe = new Recipe(title, description, mealType, imageURL);
             MongoDBClient mongoClient = new MongoDBClient(userSession.getUsername());
-            mongoClient.insertRecipe(title, mealType, description);
+            mongoClient.insertRecipe(title, mealType, description, imageURL);
             RecipeList recipeList = mainWindow.getRecipeList();
 
             // Store recipe in storage for view/delete/edit
             recipeStorage.add(newRecipe);
-            recipeList.addRecipe(title);
+            recipeList.addRecipe(title, imageURL);
 
             // Clear text in addWindow
             addWindowBody.clear();
@@ -221,17 +228,22 @@ public class PantryPal extends Application {
         });
 
         Button refreshButton = addWindow.getAddWindowFooter().getRefreshButton();
-        refreshButton.setOnAction(e->{    
+        refreshButton.setOnAction(e -> {
             try {
-            String ingredients = originalIngredients[0];
-            String mealType = suggestWindow.getSuggestWindowBody().getMealType();
-            String instructionString = "meal type: " + mealType + " Ingredients: " + ingredients;
-            ChatAPI instruction = new ChatAPI(instructionString);
-            String suggestedrecipe = instruction.suggestRecipe();
-            addWindow.getAddWindowBody().setRecipe(suggestedrecipe);
-        } catch (IOException | InterruptedException ex) {
-            ex.printStackTrace();
-        }
+                String ingredients = originalIngredients[0];
+                String mealType = suggestWindow.getSuggestWindowBody().getMealType();
+                String instructionString = "meal type: " + mealType + " Ingredients: " + ingredients;
+                ChatAPI instruction = new ChatAPI(instructionString);
+                String suggestedrecipe = instruction.suggestRecipe();
+                int recipeTitleIdx = suggestedrecipe.indexOf("Recipe Title:");
+                int mealTypeIdx = suggestedrecipe.indexOf("Meal Type:");
+                String parsedTitle = suggestedrecipe.substring(recipeTitleIdx + 14, mealTypeIdx).trim();
+                String imgURL = instruction.generateRecipeImage(parsedTitle);
+                addWindow.getAddWindowBody().setImageURL(imgURL);
+                addWindow.getAddWindowBody().setRecipe(suggestedrecipe);
+            } catch (IOException | InterruptedException ex) {
+                ex.printStackTrace();
+            }
 
         });
 

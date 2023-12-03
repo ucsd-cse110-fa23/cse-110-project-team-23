@@ -24,6 +24,7 @@ public class PantryPalTests {
     String title;
     String description = "Raw";
     String mealType = "Breakfast";
+    String imageURL;
     int startSize;
     PantryPal pantryPal;
     ArrayList<Recipe> mockRecipeStorage;
@@ -38,23 +39,31 @@ public class PantryPalTests {
         title = "Chicken";
         description = "Raw";
         mealType = "Breakfast";
+        imageURL = "";
+
         PantryPal.recipeStorage = new ArrayList<>();
-        Recipe testRecipe = new Recipe(title, description, mealType);
+        Recipe testRecipe = new Recipe(title, description, mealType, imageURL);
         PantryPal.recipeStorage.add(testRecipe);
 
         mockRecipeStorage = new ArrayList<>();
-        Recipe sortRecipe1 = new Recipe("Chicken", "Cooked chicken", "Dinner");
-        Recipe sortRecipe2 = new Recipe("Orange chicken","null","Dinner");
-        Recipe sortRecipe3 = new Recipe("Apple","raw","Lunch");
+        Recipe sortRecipe1 = new Recipe("Chicken", "Cooked chicken", "Dinner", imageURL);
+        Recipe sortRecipe2 = new Recipe("Orange chicken", "null", "Dinner", imageURL);
+        Recipe sortRecipe3 = new Recipe("Apple", "raw", "Lunch", imageURL);
         mockRecipeStorage.add(sortRecipe1);
         mockRecipeStorage.add(sortRecipe2);
         mockRecipeStorage.add(sortRecipe3);
         alphaSort = new ArrayList<Recipe>();
         oldSort = new ArrayList<Recipe>();
         newSort = new ArrayList<Recipe>();
-        alphaSort.add(sortRecipe3); alphaSort.add(sortRecipe1); alphaSort.add(sortRecipe2);
-        oldSort.add(sortRecipe1); oldSort.add(sortRecipe2); oldSort.add(sortRecipe3);
-        newSort.add(sortRecipe3); newSort.add(sortRecipe2); newSort.add(sortRecipe1);
+        alphaSort.add(sortRecipe3);
+        alphaSort.add(sortRecipe1);
+        alphaSort.add(sortRecipe2);
+        oldSort.add(sortRecipe1);
+        oldSort.add(sortRecipe2);
+        oldSort.add(sortRecipe3);
+        newSort.add(sortRecipe3);
+        newSort.add(sortRecipe2);
+        newSort.add(sortRecipe1);
     }
 
     @Test
@@ -77,7 +86,7 @@ public class PantryPalTests {
 
     @Test
     void testSetMealtype() {
-        Recipe recipe = new Recipe(null, null, null);
+        Recipe recipe = new Recipe(null, null, null, null);
         recipe.setMealType("Lunch");
 
         assertEquals("Lunch", recipe.getMealType());
@@ -116,7 +125,7 @@ public class PantryPalTests {
 
     @Test
     void testSaveRecipe() {
-        Recipe recipe1 = new Recipe("orange chicken", "orange,chicken", "Lunch");
+        Recipe recipe1 = new Recipe("orange chicken", "orange,chicken", "Lunch", imageURL);
 
         PantryPal.recipeStorage.add(recipe1);
         assertEquals(recipe1, PantryPal.recipeStorage.get(1));
@@ -126,7 +135,7 @@ public class PantryPalTests {
     void testChatGpt() {
         try {
             ChatAPI chat = new ChatAPI(description);
-            Recipe recipe2 = new Recipe("", "", "");
+            Recipe recipe2 = new Recipe("", "", "", imageURL);
             recipe2.setDescription(chat.suggestRecipe());
 
             assertNotEquals("", recipe2.getDescription());
@@ -164,13 +173,11 @@ public class PantryPalTests {
 
     @Test
     public void testSuggestRecipe() {
- 
+
         String instruction = "test ingredients";
         MockChatAPI mockChatAPI = new MockChatAPI(instruction);
 
-
         String result = mockChatAPI.suggestRecipe();
-
 
         JSONObject expectedJson = new JSONObject();
         expectedJson.put("model", "text-davinci-003");
@@ -179,17 +186,16 @@ public class PantryPalTests {
         expectedJson.put("temperature", 1.0);
         String expectedString = expectedJson.toString();
 
-        assertEquals(expectedString, result); 
+        assertEquals(expectedString, result);
     }
 
-        @Test
+    @Test
     public void refreshrecipe() {
 
         String initialInstruction = "test ingredients";
         MockChatAPI mockChatAPI = new MockChatAPI(initialInstruction);
 
         String initialResult = mockChatAPI.suggestRecipe();
-
 
         JSONObject expectedInitialJson = new JSONObject();
         expectedInitialJson.put("model", "text-davinci-003");
@@ -205,23 +211,22 @@ public class PantryPalTests {
         assertNotEquals(initialResult, refreshedResult);
     }
 
-
     @Test
-    public void testSortAlpha(){
-       ArrayList<Recipe> afterSort = MainWindowHeader.sortAlpha(mockRecipeStorage);
-       assertEquals(alphaSort, afterSort);
-    } 
-
-    @Test
-    public void testSortNew(){
-        ArrayList<Recipe> afterSort = MainWindowHeader.sortNew(mockRecipeStorage);
-       assertEquals(newSort, afterSort);
+    public void testSortAlpha() {
+        ArrayList<Recipe> afterSort = MainWindowHeader.sortAlpha(mockRecipeStorage);
+        assertEquals(alphaSort, afterSort);
     }
 
     @Test
-    public void testSortOld(){
+    public void testSortNew() {
+        ArrayList<Recipe> afterSort = MainWindowHeader.sortNew(mockRecipeStorage);
+        assertEquals(newSort, afterSort);
+    }
+
+    @Test
+    public void testSortOld() {
         ArrayList<Recipe> afterSort = MainWindowHeader.sortOld(mockRecipeStorage);
-       assertEquals(oldSort, afterSort);
+        assertEquals(oldSort, afterSort);
     }
 
 }

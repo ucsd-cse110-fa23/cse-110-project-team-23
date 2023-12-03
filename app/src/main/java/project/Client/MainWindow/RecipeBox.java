@@ -12,6 +12,8 @@ import javafx.scene.Scene;
 import javafx.scene.text.*;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.geometry.*;
 import javax.sound.sampled.*;
 import java.io.*;
@@ -30,24 +32,28 @@ import java.util.*;
 class RecipeBox extends HBox {
     private Button title;
     private String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
+    private ImageView recipeImage;
     private Button deleteButton;
-
-    
 
     RecipeBox(String title, UserSession userSession) {
         // this.setPrefSize(1140, 50);
 
         // Set recipe appearance
         this.title = new Button();
-        this.title.setPrefSize(800, 50);
+        this.title.setPrefSize(800, 100);
         this.title.setText(title);
-       
+
+        this.recipeImage = new ImageView();
+        this.recipeImage.setFitWidth(100);
+        this.recipeImage.setFitHeight(100);
+        this.getChildren().add(this.recipeImage);
+
         this.title.setStyle(defaultButtonStyle);
         this.getChildren().add(this.title);
 
         // Set up delete button apperance
         this.deleteButton = new Button("delete");
-        this.deleteButton.setPrefSize(350, 50);
+        this.deleteButton.setPrefSize(350, 100);
 
         // deletes the recipe from the list
         this.deleteButton.setOnAction(e -> {
@@ -88,6 +94,7 @@ class RecipeBox extends HBox {
             }
         });
     }
+
     private Recipe getRecipeByTitle(String title) {
         for (Recipe recipe : PantryPal.recipeStorage) {
             if (recipe.getTitle().equals(title)) {
@@ -96,8 +103,19 @@ class RecipeBox extends HBox {
         }
         return null;
     }
-     public void replaceRecipe(String title){
-            this.title.setText(title);
+
+    public void replaceRecipe(String title) {
+        this.title.setText(title);
     }
-   
+
+    // Set the recipe image using the provided image URL
+    public void setImage(String imageUrl) {
+        try {
+            Image image = new Image(imageUrl);
+            recipeImage.setImage(image);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -15,7 +15,6 @@ import org.json.*;
 
 import java.util.*;
 
-
 /**
  * Center segment for AddWindow
  */
@@ -26,6 +25,7 @@ public class AddWindowBody extends VBox {
     private TextField mealType;
     private Label descriptionLabel;
     private TextArea description;
+    private String imageURL;
 
     public AddWindowBody() {
         this.setStyle("-fx-background-color: #F0F8FF;");
@@ -62,12 +62,17 @@ public class AddWindowBody extends VBox {
     public String getDescription() {
         return description.getText();
     }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
     public void clear() {
         title.clear();
         description.clear();
     }
 
-    public void setRecipe(String suggestedrecipe){
+    public void setRecipe(String suggestedrecipe) {
         int recipeTitleIdx = suggestedrecipe.indexOf("Recipe Title:");
         int mealTypeIdx = suggestedrecipe.indexOf("Meal Type:");
         int recipeInstructionsIdx = suggestedrecipe.indexOf("Recipe Instructions:");
@@ -77,5 +82,9 @@ public class AddWindowBody extends VBox {
         title.setText(parseTitle);
         mealType.setText(parseMealType);
         description.setText(parseInstruction);
+    }
+
+    public void setImageURL(String url) {
+        imageURL = url;
     }
 }
