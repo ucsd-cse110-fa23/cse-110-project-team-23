@@ -94,7 +94,8 @@ public class MongoDBClient {
                 String title = recipeDoc.getString("title");
                 String description = recipeDoc.getString("description");
                 String mealType = recipeDoc.getString("mealType");
-                String imageURL = recipeDoc.getString("imageURL");
+                ChatAPI instruction = new ChatAPI(title);
+                String imageURL = instruction.generateRecipeImage(title);
 
                 // Create and add a new Recipe object to the recipeList
                 Recipe newRecipe = new Recipe(title, description, mealType, imageURL);
