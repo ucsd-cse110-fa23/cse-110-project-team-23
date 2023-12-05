@@ -60,8 +60,8 @@ public class ViewWindow extends BorderPane {
 
         footer.getSaveButton().setOnAction(e -> {
             recipe.setDescription(this.getDescription());
-            MongoDBClient mongoClient = new MongoDBClient(userSession.getUsername());
-            mongoClient.editRecipe(recipe.getTitle(), this.getDescription());
+            //MongoDBClient mongoClient = new MongoDBClient(userSession.getUsername());
+            //mongoClient.editRecipe(recipe.getTitle(), this.getDescription());
             Stage stage = (Stage) footer.getSaveButton().getScene().getWindow();
             double height = stage.getHeight();
             double width = stage.getWidth();

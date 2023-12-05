@@ -6,10 +6,10 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URI;
-
+import java.util.*;
 
 public class ClientModel {
-    public String performRequest(String method, String username, String password, String isCreateAccount, String verified, String handler) {
+    public String performRequest(String method, String username, String password, String recipes, String handler) {
         // Implement your HTTP request logic here and return the response
 
         try {
@@ -24,16 +24,22 @@ public class ClientModel {
 
             if (method.equals("POST")) {
                 OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
-                out.write(username + "!" + password + "@" + isCreateAccount + "#" + verified);
+                out.write(username + "!" + password + "@");
                 out.flush();
                 out.close();
             }
             
-            // if (method.equals("GET")) {
-            //     BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            //     response = in.readLine();
-            //     in.close();
-            // }
+            if (method.equals("PUT")){
+                OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
+                out.write(username + "%");
+                Scanner in = new Scanner(recipes);
+                while (in.hasNextLine()) {
+                    out.write(in.nextLine() + "&");
+                }
+                in.close();
+                out.flush();
+                out.close();
+            }
             
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             response = in.readLine();

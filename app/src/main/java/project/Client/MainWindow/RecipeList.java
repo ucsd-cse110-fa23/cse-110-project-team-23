@@ -1,11 +1,5 @@
 package project.Client.MainWindow;
 
-import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.stage.Stage;
-import project.PantryPal;
-import project.Client.ViewWindow.ViewWindow;
-import project.Database.MongoDBClient;
 import project.Database.UserSession;
 import project.Server.Recipe;
 import javafx.scene.Scene;

@@ -13,12 +13,15 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.slf4j.LoggerFactory;
 
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.DeleteOptions;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.UpdateResult;
-
+import com.mongodb.client.model.DeleteOptions.*;
 import project.Client.MainWindow.RecipeList;
 import project.Server.ChatAPI;
 import project.Server.Recipe;
@@ -42,6 +45,16 @@ public class MongoDBClient {
                     .append("description", description)
                     .append("imageURL", imageURL); // Include imageURL field
             userCollection.insertOne(recipeDoc);
+        }
+    }
+
+    public void deleteAll() {
+        try (MongoClient mongoClient = MongoClients.create(uri)) {
+            MongoDatabase pantryPal_db = mongoClient.getDatabase("Database");
+            MongoCollection<Document> userCollection = pantryPal_db.getCollection(username);
+            //DeleteOptions deleteOptions = (DeleteOptions) ((FindIterable<Document>) new DeleteOptions()).skip(1);
+            Document filter = new Document("username", new Document("$exists", false));
+            userCollection.deleteMany(filter);
         }
     }
 
@@ -87,7 +100,10 @@ public class MongoDBClient {
             // Fetch all documents in the collection
             List<Document> recipes = userCollection.find().into(new ArrayList<>());
 
-            String result = "hello world";
+            return "helloworld";
+            /*
+            String result = "";
+
             // Iterate through documents, skipping the first one
             for (int i = 1; i < recipes.size(); i++) {
                 Document recipeDoc = recipes.get(i);
@@ -99,6 +115,7 @@ public class MongoDBClient {
                 result += title + "!" + description + "@" + mealType + "#" + imageURL + "$";
             }
             return result;
+            */
         }
     }
 
@@ -117,7 +134,13 @@ public class MongoDBClient {
             for (int i = 1; i < recipes.size(); i++) {
                 Document recipeDoc = recipes.get(i);
                 String title = recipeDoc.getString("title");
-                String description = recipeDoc.getString("description");
+                String descriptionAll = recipeDoc.getString("description");
+                String description = "";
+                while(descriptionAll.indexOf("&") != -1) {
+                    description += descriptionAll.substring(0, descriptionAll.indexOf("&")) + '\n';
+                    descriptionAll = descriptionAll.substring(descriptionAll.indexOf("&") + 1);
+                }
+                description += descriptionAll;
                 String mealType = recipeDoc.getString("mealType");
                 ChatAPI instruction = new ChatAPI(title);
                 String imageURL = instruction.generateRecipeImage(title);

@@ -43,4 +43,8 @@ public class Recipe {
             return;
         }
     }
+
+    public String toString() {
+        return this.getTitle() + "!" + this.getDescription() + "@" + this.getMealType() + "$" + "FakeURL" + "#";
+    }
 }

@@ -3,6 +3,7 @@ import com.sun.net.httpserver.*;
 
 import project.Client.CreateAccountWindow.CreateAccountWindow;
 import project.Client.CreateAccountWindow.CreateAccountWindowBody;
+import project.Server.Client.CloseHandler;
 import project.Server.Client.LoginHandler;
 import project.Server.Client.RecipeHandler;
 import project.Server.Client.UserHandler;
@@ -28,6 +29,7 @@ public class MyServer {
 		server.createContext("/create" , new UserHandler(data));
 		server.createContext("/login", new LoginHandler());
 		server.createContext("/recipe", new RecipeHandler());
+		server.createContext("/close",new CloseHandler());
 		//server.createContext("/name" , new UserHandler(users));
 		server.setExecutor(threadPoolExecutor);
 		server.start();

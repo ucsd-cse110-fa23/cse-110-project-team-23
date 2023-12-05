@@ -72,7 +72,7 @@ public class PantryPal extends Application {
 
 
         ClientModel clientModel = new ClientModel();
-        ClientController cc = new ClientController(createAccountWindow, loginWindow, clientModel);
+        ClientController cc = new ClientController(createAccountWindow, loginWindow, primaryStage, clientModel);
 
         // Setting the layout of the AddWindow
         AddWindow addWindow = new AddWindow();
@@ -210,8 +210,8 @@ public class PantryPal extends Application {
             String mealType = addWindowBody.getMealType();
             String imageURL = addWindowBody.getImageURL();
             Recipe newRecipe = new Recipe(title, description, mealType, imageURL);
-            MongoDBClient mongoClient = new MongoDBClient(userSession.getUsername());
-            mongoClient.insertRecipe(title, mealType, description, imageURL);
+            //MongoDBClient mongoClient = new MongoDBClient(userSession.getUsername());
+            //mongoClient.insertRecipe(title, mealType, description, imageURL);
             RecipeList recipeList = mainWindow.getRecipeList();
 
             // Store recipe in storage for view/delete/edit
@@ -257,13 +257,6 @@ public class PantryPal extends Application {
 
         // Make window non-resizable
         primaryStage.setResizable(true);
-        primaryStage.setOnCloseRequest(e -> {
-            try {
-                userSession.clearSession();
-            } catch (Exception ex) {
-
-            }
-        });
         // Show the app
         primaryStage.show();
 

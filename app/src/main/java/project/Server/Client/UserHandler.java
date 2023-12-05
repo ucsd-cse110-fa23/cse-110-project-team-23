@@ -42,13 +42,14 @@ public class UserHandler implements HttpHandler {
 
         String username = postData.substring(0, postData.indexOf("!"));
         String password = postData.substring(postData.indexOf("!") + 1, postData.indexOf("@"));
-        String isCreateAccount = postData.substring(postData.indexOf("@") + 1, postData.indexOf("#"));
-        String verified = postData.substring(postData.indexOf("#")+1);
-
+        //String isCreateAccount = postData.substring(postData.indexOf("@") + 1, postData.indexOf("#"));
+        //String verified = postData.substring(postData.indexOf("#")+1);
+        
         ArrayList<String> data = new ArrayList<String>();
         data.add(password);
-        data.add(isCreateAccount);
-        data.add(verified);
+        //data.add(isCreateAccount);
+       //data.add(verified);
+        
         this.users.put(username, data);
         scanner.close();
         boolean canCreate = new UserAuthentication(username, password).createAccount();

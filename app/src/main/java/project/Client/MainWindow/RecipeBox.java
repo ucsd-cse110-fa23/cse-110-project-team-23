@@ -65,8 +65,8 @@ class RecipeBox extends HBox {
             } catch (NullPointerException error) {
             }
 
-            MongoDBClient mongoClient = new MongoDBClient(userSession.getUsername());
-            mongoClient.deleteRecipe(title);
+            //MongoDBClient mongoClient = new MongoDBClient(userSession.getUsername());
+            //mongoClient.deleteRecipe(title);
         });
         // adds the delete button
         this.getChildren().add(this.deleteButton);

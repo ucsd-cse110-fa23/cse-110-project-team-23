@@ -39,8 +39,7 @@ public class LoginHandler implements HttpHandler {
 
         String username = postData.substring(0, postData.indexOf("!"));
         String password = postData.substring(postData.indexOf("!") + 1, postData.indexOf("@"));
-        String isCreateAccount = postData.substring(postData.indexOf("@") + 1, postData.indexOf("#"));
-        String verified = postData.substring(postData.indexOf("#") + 1);
+        
 
         scanner.close();
         int canLogin = new UserAuthentication(username, password).login();
