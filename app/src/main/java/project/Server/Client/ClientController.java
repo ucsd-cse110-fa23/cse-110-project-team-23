@@ -55,11 +55,18 @@ public class ClientController {
         Stage stage = view2.getLoginWindowBody().getPrimaryStage();
         Scene scene = view2.getLoginWindowBody().getTargetScene();
         UserSession userSession = view2.getLoginWindowBody().getUserSession();
-
+        RecipeList recipeList = view2.getLoginWindowBody().getRecipeList();
+        List<Recipe> recipeStorage = view2.getLoginWindowBody().getRecipeStorage();
         if (canLogin == 1) {
             stage.setScene(scene);
             userSession.setUsername(username);
             MongoDBClient mongoClient = new MongoDBClient(userSession.getUsername());
+            try {
+                mongoClient.openRecipes(recipeList, recipeStorage);
+            } catch (Exception err) {
+                System.out.println(err);
+            }
+
         } else if (canLogin == 2) {
             view2.getLoginWindowBody().showAlert("Login Error", "Password Incorrect");
         } else if (canLogin == 3) {
@@ -67,10 +74,10 @@ public class ClientController {
         }
         view2.getLoginWindowBody().showAlert("Response: ", response);
         
+        /* 
         String response1 = model.performRequest("POST", username, password, "false", "false", "recipe");
 
-        RecipeList recipeList = view2.getLoginWindowBody().getRecipeList();
-        List<Recipe> recipeStorage = view2.getLoginWindowBody().getRecipeStorage();
+        
 
         while (response1.indexOf("$") != -1) {
             String line = response1.substring(0, response1.indexOf("$"));
@@ -84,5 +91,7 @@ public class ClientController {
             recipeList.addRecipe(title, imageURL);
             response1 = response1.substring(response1.indexOf("$"));
         }
+        */
     }
+    
 }
