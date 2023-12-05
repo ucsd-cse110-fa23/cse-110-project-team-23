@@ -56,6 +56,7 @@ public class UserAuthentication {
     }
 
     public int login() {
+
         try (MongoClient mongoClient = MongoClients.create(uri)) {
 
             MongoDatabase pantryPal_db = mongoClient.getDatabase("Database");

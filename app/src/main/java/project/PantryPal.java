@@ -6,12 +6,14 @@ import javafx.stage.Stage;
 import project.Client.AddWindow.AddWindow;
 import project.Client.AddWindow.AddWindowBody;
 import project.Client.CreateAccountWindow.CreateAccountWindow;
+import project.Client.CreateAccountWindow.CreateAccountWindowBody;
 import project.Client.LoginWindow.LoginWindow;
 import project.Client.MainWindow.MainWindow;
 import project.Client.MainWindow.RecipeList;
 import project.Client.OpenAppWindow.OpenAppWindow;
 import project.Client.SuggestWindow.SuggestWindow;
 import project.Client.SuggestWindow.SuggestWindowBody;
+import project.Server.Client.*;
 import project.Database.MongoDBClient;
 import project.Database.UserSession;
 import project.Server.ChatAPI;
@@ -43,6 +45,7 @@ public class PantryPal extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Initialize new user session
+        
         userSession = UserSession.getInstance();
 
         // Initiate recipe storage
@@ -65,6 +68,11 @@ public class PantryPal extends Application {
         // Setting createAccount window
         CreateAccountWindow createAccountWindow = new CreateAccountWindow(primaryStage, loginScene);
         Scene createAccountScene = new Scene(createAccountWindow, 800, 400);
+
+
+
+        ClientModel clientModel = new ClientModel();
+        ClientController cc = new ClientController(createAccountWindow, loginWindow, clientModel);
 
         // Setting the layout of the AddWindow
         AddWindow addWindow = new AddWindow();

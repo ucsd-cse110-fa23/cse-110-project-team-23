@@ -26,7 +26,7 @@ import project.Server.Recipe;
 public class MongoDBClient {
     private static final String uri = "mongodb://asandoval2313:tTr2Pnu0ZiQ2pJuo@ac-hfcmrm5-shard-00-00.gixdies.mongodb.net:27017,ac-hfcmrm5-shard-00-01.gixdies.mongodb.net:27017,ac-hfcmrm5-shard-00-02.gixdies.mongodb.net:27017/?ssl=true&replicaSet=atlas-dzpzxt-shard-0&authSource=admin&retryWrites=true&w=majority";
     private String username;
-
+    //private List<Recipe> recipeSt
     public MongoDBClient(String username) {
         this.username = username;
     }
@@ -74,6 +74,31 @@ public class MongoDBClient {
             } else {
                 System.out.println("Recipe not found.");
             }
+        }
+    }
+
+    public String recipesToString() throws IOException, InterruptedException {
+        try (MongoClient mongoClient = MongoClients.create(uri)) {
+            MongoDatabase pantryPalDb = mongoClient.getDatabase("Database");
+
+            // Fetch the collection with the username
+            MongoCollection<Document> userCollection = pantryPalDb.getCollection(username);
+
+            // Fetch all documents in the collection
+            List<Document> recipes = userCollection.find().into(new ArrayList<>());
+
+            String result = "hello world";
+            // Iterate through documents, skipping the first one
+            for (int i = 1; i < recipes.size(); i++) {
+                Document recipeDoc = recipes.get(i);
+                String title = recipeDoc.getString("title");
+                String description = recipeDoc.getString("description");
+                String mealType = recipeDoc.getString("mealType");
+                ChatAPI instruction = new ChatAPI(title);
+                String imageURL = instruction.generateRecipeImage(title);
+                result += title + "!" + description + "@" + mealType + "#" + imageURL + "$";
+            }
+            return result;
         }
     }
 

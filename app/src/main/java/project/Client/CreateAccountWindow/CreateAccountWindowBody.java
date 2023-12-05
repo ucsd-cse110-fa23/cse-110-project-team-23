@@ -1,5 +1,7 @@
 package project.Client.CreateAccountWindow;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -53,39 +55,46 @@ public class CreateAccountWindowBody extends VBox {
 
         createAccountButton = new Button("Create Account");
         rememberMeCheckBox = new CheckBox("Remember Me");
+        
+        // createAccountButton.setOnAction(e -> {
+        //     String enteredUsername = getUsername();
+        //     String enteredPassword = getPassword();
 
-        createAccountButton.setOnAction(e -> {
-            String enteredUsername = getUsername();
-            String enteredPassword = getPassword();
+        //     // Validate that username and password are not empty
+        //     if (enteredUsername.isEmpty() || enteredPassword.isEmpty()) {
+        //         Alert alert = new Alert(AlertType.ERROR);
+        //         alert.setTitle("Error");
+        //         alert.setHeaderText(null);
+        //         alert.setContentText("Please enter both username and password.");
+        //         alert.showAndWait();
+        //         return;
+        //     } else {
+        //         UserAuthentication userAuth = new UserAuthentication(enteredUsername, enteredPassword);
+        //         if (userAuth.createAccount()) {
+        //             primaryStage.setScene(targetScene);
+        //         } else {
+        //             Alert alert = new Alert(AlertType.ERROR);
+        //             alert.setTitle("Error");
+        //             alert.setHeaderText(null);
+        //             alert.setContentText("Username already exists. Please choose a different username");
+        //             alert.showAndWait();
+        //             return;
+        //         }
+        //     }
 
-            // Validate that username and password are not empty
-            if (enteredUsername.isEmpty() || enteredPassword.isEmpty()) {
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText(null);
-                alert.setContentText("Please enter both username and password.");
-                alert.showAndWait();
-                return;
-            } else {
-                UserAuthentication userAuth = new UserAuthentication(enteredUsername, enteredPassword);
-                if (userAuth.createAccount()) {
-                    primaryStage.setScene(targetScene);
-                } else {
-                    Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Error");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Username already exists. Please choose a different username");
-                    alert.showAndWait();
-                    return;
-                }
-            }
-
-        });
+        // });
 
         this.getChildren().addAll(usernameLabel, username, passwordLabel, password, createAccountButton,
                 rememberMeCheckBox);
     }
 
+    public Stage getPrimaryStage() {
+        return this.primaryStage;
+    }
+
+    public Scene getTargetScene() {
+        return this.targetScene;
+    }
     public String getUsername() {
         return username.getText();
     }
@@ -103,6 +112,18 @@ public class CreateAccountWindowBody extends VBox {
         return createAccountButton;
     }
 
+    public void createAccountButtonAction(EventHandler<ActionEvent> eventHandler) {
+        this.createAccountButton.setOnAction(eventHandler);
+    }
+
+    public void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+    
     public CheckBox getRememberMeCheckBox() {
         return rememberMeCheckBox;
     }
