@@ -179,15 +179,26 @@ public class PantryPalTests {
     public void testLoginSuccessful() {
         MockUserAuthentication mockAuth = new MockUserAuthentication(MockUserAuthentication.MOCK_USERNAME,
                 MockUserAuthentication.MOCK_PASSWORD);
-        assertEquals("a", mockAuth.login());
+        assertEquals("Mock Login successful!", mockAuth.login());
     }
 
     @Test
     public void testLoginFailed() {
         MockUserAuthentication mockAuth = new MockUserAuthentication("wrongUser", "wrongPassword");
-        assertEquals("c", mockAuth.login());
+        assertEquals("Mock Incorrect username/password!", mockAuth.login());
     }
 
+    @Test 
+    public void testServerIsOFFwhenLogin(){
+         MockUserAuthentication mockAuth = new MockUserAuthentication("", "");
+        assertEquals("Server is unavailable!", mockAuth.login());
+    }
+
+    @Test 
+    public void testServerIsOFFwhenCreateAccount(){
+         MockUserAuthentication mockAuth = new MockUserAuthentication("", "");
+        assertFalse(mockAuth.createAccount());
+    }
     @Test
     public void testSuggestRecipe() {
 
@@ -282,7 +293,7 @@ public class PantryPalTests {
         assertTrue(mockAuth.createAccount());
 
         MockUserAuthentication mockAuthLogin = new MockUserAuthentication("mockUser", "mockPassword");
-        assertEquals("a", mockAuthLogin.login());
+        assertEquals("Mock Login successful!", mockAuthLogin.login());
 
         Recipe recipe1 = new Recipe("Chicken", "Cooked chicken", "Dinner", "");
         Recipe recipe2 = new Recipe("Orange chicken", "null", "Dinner", "");
