@@ -31,10 +31,13 @@ public class PantryPalTests {
     ArrayList<Recipe> alphaSort;
     ArrayList<Recipe> oldSort;
     ArrayList<Recipe> newSort;
+    ArrayList<Recipe> breakfast;
+
+    ArrayList<Recipe> mockRecipeStorage2 = new ArrayList<>();
     private static final String AUDIO_FILE_PATH = "recording.wav";
 
     @BeforeEach
-    void setUp() {
+    void setUp() { 
         startSize = 0;
         title = "Chicken";
         description = "Raw";
@@ -64,7 +67,28 @@ public class PantryPalTests {
         newSort.add(sortRecipe3);
         newSort.add(sortRecipe2);
         newSort.add(sortRecipe1);
+
+        mockRecipeStorage2 = new ArrayList<>();
+        Recipe Recipe1 = new Recipe("Chicken", "Cooked chicken", "Dinner", imageURL);
+        Recipe Recipe2 = new Recipe("Orange chicken", "null", "Dinner", imageURL);
+        Recipe Recipe3 = new Recipe("Apple", "raw", "Lunch", imageURL);
+        mockRecipeStorage2.add(Recipe1);
+        mockRecipeStorage2.add(Recipe2);
+        mockRecipeStorage2.add(Recipe3);
+        breakfast = new ArrayList<Recipe>();
+        oldSort = new ArrayList<Recipe>();
+        newSort = new ArrayList<Recipe>();
+        alphaSort.add(sortRecipe3);
+        alphaSort.add(sortRecipe1);
+        alphaSort.add(sortRecipe2);
+        oldSort.add(sortRecipe1);
+        oldSort.add(sortRecipe2);
+        oldSort.add(sortRecipe3);
+        newSort.add(sortRecipe3);
+        newSort.add(sortRecipe2);
+        newSort.add(sortRecipe1);
     }
+        
 
     @Test
     void testAddRecipe() {
@@ -223,10 +247,30 @@ public class PantryPalTests {
         assertEquals(newSort, afterSort);
     }
 
+
+
     @Test
     public void testSortOld() {
         ArrayList<Recipe> afterSort = MainWindowHeader.sortOld(mockRecipeStorage);
         assertEquals(oldSort, afterSort);
+    }
+
+        @Test
+    public void testFilter1() {
+        ArrayList<Recipe> afterSort = MainWindowHeader.FilterbyBreakfast(mockRecipeStorage);
+        assertEquals(oldSort, afterSort);
+    }
+
+        @Test
+    public void testFilter2() {
+        ArrayList<Recipe> afterSort = MainWindowHeader.FilterbyLunch(mockRecipeStorage);
+        assertEquals(alphaSort, afterSort);
+    }
+
+    @Test
+    public void testFilter3() {
+        ArrayList<Recipe> afterSort = MainWindowHeader.FilterbyDinner(mockRecipeStorage);
+        assertEquals(newSort, afterSort);
     }
 
 }

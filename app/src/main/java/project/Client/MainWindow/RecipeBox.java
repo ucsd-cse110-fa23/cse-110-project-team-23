@@ -41,8 +41,7 @@ class RecipeBox extends HBox {
         // Set recipe appearance
         this.title = new Button();
         this.title.setPrefSize(800, 100);
-        String mealType = getRecipeByTitle(title).getMealType();
-        this.title.setText(mealType + ": " + title);
+        this.title.setText(title);
 
         this.recipeImage = new ImageView();
         this.recipeImage.setFitWidth(100);

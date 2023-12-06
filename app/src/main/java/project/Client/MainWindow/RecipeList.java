@@ -39,7 +39,7 @@ public class RecipeList extends VBox {
 
     // Adds a single recipe to the main list given the title of recipe
     public void addRecipe(String title, String imageURL) {
-        RecipeBox newRecipe = new RecipeBox(title, userSession);
+        RecipeBox newRecipe = new RecipeBox( title, userSession);
         newRecipe.setImage(imageURL);
         this.getChildren().add(0, newRecipe); // add new recipe to top of list
     }
