@@ -44,6 +44,10 @@ public class Recipe {
         }
     }
 
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
     public String toString() {
         return this.getTitle() + "!" + this.getDescription() + "@" + this.getMealType() + "$" + "FakeURL" + "#";
     }

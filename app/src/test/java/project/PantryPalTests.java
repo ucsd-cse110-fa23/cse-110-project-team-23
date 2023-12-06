@@ -25,6 +25,7 @@ public class PantryPalTests {
     String description = "Raw";
     String mealType = "Breakfast";
     String imageURL;
+    String imageURL2 ="initial_image_url";
     int startSize;
     PantryPal pantryPal;
     ArrayList<Recipe> mockRecipeStorage;
@@ -32,6 +33,8 @@ public class PantryPalTests {
     ArrayList<Recipe> oldSort;
     ArrayList<Recipe> newSort;
     ArrayList<Recipe> breakfast;
+    ArrayList<Recipe> Lunch;
+    ArrayList<Recipe> Dinner;
 
     ArrayList<Recipe> mockRecipeStorage2 = new ArrayList<>();
     private static final String AUDIO_FILE_PATH = "recording.wav";
@@ -43,7 +46,6 @@ public class PantryPalTests {
         description = "Raw";
         mealType = "Breakfast";
         imageURL = "";
-
         PantryPal.recipeStorage = new ArrayList<>();
         Recipe testRecipe = new Recipe(title, description, mealType, imageURL);
         PantryPal.recipeStorage.add(testRecipe);
@@ -69,24 +71,18 @@ public class PantryPalTests {
         newSort.add(sortRecipe1);
 
         mockRecipeStorage2 = new ArrayList<>();
-        Recipe Recipe1 = new Recipe("Chicken", "Cooked chicken", "Dinner", imageURL);
+        Recipe Recipe1 = new Recipe("Chicken", "Cooked chicken", "Breakfast", imageURL);
         Recipe Recipe2 = new Recipe("Orange chicken", "null", "Dinner", imageURL);
         Recipe Recipe3 = new Recipe("Apple", "raw", "Lunch", imageURL);
         mockRecipeStorage2.add(Recipe1);
         mockRecipeStorage2.add(Recipe2);
         mockRecipeStorage2.add(Recipe3);
         breakfast = new ArrayList<Recipe>();
-        oldSort = new ArrayList<Recipe>();
-        newSort = new ArrayList<Recipe>();
-        alphaSort.add(sortRecipe3);
-        alphaSort.add(sortRecipe1);
-        alphaSort.add(sortRecipe2);
-        oldSort.add(sortRecipe1);
-        oldSort.add(sortRecipe2);
-        oldSort.add(sortRecipe3);
-        newSort.add(sortRecipe3);
-        newSort.add(sortRecipe2);
-        newSort.add(sortRecipe1);
+        Lunch = new ArrayList<Recipe>();
+        Dinner = new ArrayList<Recipe>();
+        breakfast.add(Recipe1);
+        Lunch.add(Recipe3);;
+        Dinner.add(Recipe2);
     }
         
 
@@ -257,20 +253,30 @@ public class PantryPalTests {
 
         @Test
     public void testFilter1() {
-        ArrayList<Recipe> afterSort = MainWindowHeader.FilterbyBreakfast(mockRecipeStorage);
-        assertEquals(oldSort, afterSort);
+        ArrayList<Recipe> afterSort = MainWindowHeader.FilterbyBreakfast(mockRecipeStorage2);
+        assertEquals(breakfast, afterSort);
     }
 
         @Test
     public void testFilter2() {
-        ArrayList<Recipe> afterSort = MainWindowHeader.FilterbyLunch(mockRecipeStorage);
-        assertEquals(alphaSort, afterSort);
+        ArrayList<Recipe> afterSort = MainWindowHeader.FilterbyLunch(mockRecipeStorage2);
+        assertEquals(Lunch, afterSort);
     }
 
     @Test
     public void testFilter3() {
-        ArrayList<Recipe> afterSort = MainWindowHeader.FilterbyDinner(mockRecipeStorage);
-        assertEquals(newSort, afterSort);
+        ArrayList<Recipe> afterSort = MainWindowHeader.FilterbyDinner(mockRecipeStorage2);
+        assertEquals(Dinner, afterSort);
+    }
+
+    @Test
+    public void testImage(){
+        Recipe Recipe1 = new Recipe("Chicken", "Cooked chicken", "Breakfast",imageURL2);
+
+        assertEquals("initial_image_url", Recipe1.getImageURL());
+        Recipe1.setImageURL("new_image_url");
+
+        assertEquals("new_image_url", Recipe1.getImageURL());
     }
 
 }
