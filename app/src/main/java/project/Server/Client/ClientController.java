@@ -56,7 +56,6 @@ public class ClientController {
     private void handleLoginButton(ActionEvent event) {
         String username = view2.getLoginWindowBody().getUsername();
         String password = view2.getLoginWindowBody().getPassword();
-
         String response = model.performRequest("POST", username, password, "NULL_RECIPE", "", "login");
     
         Stage stage = view2.getLoginWindowBody().getPrimaryStage();
@@ -101,7 +100,7 @@ public class ClientController {
     private void handleShare(ActionEvent event) {
         String title = this.view3.getRecipeViewHeader().getTitle().trim();
         String recipe = this.view3.getDescription();
-        String username = this.view3.getUserSession().getUsername();
+        String username = this.userSession.getUsername();
         String temp = "";
         for (int i = 0; i < title.length(); i++) {
             if (title.charAt(i) == ' ') {
@@ -111,7 +110,7 @@ public class ClientController {
             }
         }
         String response = model.performRequest("POST", username, "NULL_PASSWORD", recipe, temp, "share");
-        view3.showAlert("Share Link", "http://localhost:8100/share/?=" + username + "/" + temp);
+        view3.showAlert("Copied to Clipboard!", "http://localhost:8100/share/?=" + username + "/" + temp);
         try {
             userSession.clearSession();
         } catch (Exception ex) {

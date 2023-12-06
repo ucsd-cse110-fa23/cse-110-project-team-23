@@ -110,8 +110,8 @@ public class ViewWindow extends BorderPane {
         alert.setContentText(content);
         alert.showAndWait();
 
-        final Clipboard clipboard = Clipboard.getSystemClipboard();
-        final ClipboardContent c = new ClipboardContent();
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent c = new ClipboardContent();
         c.putString(content);
         clipboard.setContent(c);
     }
