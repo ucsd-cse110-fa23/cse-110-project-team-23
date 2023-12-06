@@ -76,7 +76,7 @@ public class AddWindowBody extends VBox {
         int recipeTitleIdx = suggestedrecipe.indexOf("Recipe Title:");
         int mealTypeIdx = suggestedrecipe.indexOf("Meal Type:");
         int recipeInstructionsIdx = suggestedrecipe.indexOf("Recipe Instructions:");
-        String parseTitle = suggestedrecipe.substring(mealTypeIdx + 11, recipeInstructionsIdx).trim() +": " + suggestedrecipe.substring(recipeTitleIdx + 14, mealTypeIdx).trim();
+        String parseTitle =   suggestedrecipe.substring(recipeTitleIdx + 14, mealTypeIdx).trim()+ ": " + suggestedrecipe.substring(mealTypeIdx + 11, recipeInstructionsIdx).trim();
         String parseMealType = suggestedrecipe.substring(mealTypeIdx + 11, recipeInstructionsIdx).trim();
         String parseInstruction = suggestedrecipe.substring(recipeInstructionsIdx + 21).trim();
         title.setText(parseTitle);

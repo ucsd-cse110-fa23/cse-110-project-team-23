@@ -49,7 +49,7 @@ public class MainWindowHeader extends HBox {
 
         sortComboBox = new ComboBox<>();
         sortComboBox.setPrefSize(150, 20);
-        sortComboBox.getItems().addAll("Latest (default)", "Oldest", "A-Z");
+        sortComboBox.getItems().addAll("Latest (default)", "Oldest", "A-Z","Z-A");
         sortComboBox.getSelectionModel().select("Sort Recipes");
 
         FilterComboBox = new ComboBox<>();
@@ -99,7 +99,10 @@ public class MainWindowHeader extends HBox {
 
         } else if (sortAction.equals("A-Z")) {
             sortedList = sortAlpha(list);
-        } else {
+
+        } else if(sortAction.equals("Z-A")){
+            sortedList = sortAlpha2(list);
+        }else{
             sortedList = list;
         }
         recipeList.getChildren().clear();
@@ -198,6 +201,36 @@ public class MainWindowHeader extends HBox {
                 if (s1.length() > s2.length()) {
                     return 1;
                 } else if (s1.length() < s2.length()) {
+                    return -1;
+                }
+                return 0;
+            }
+        });
+        return list;
+    }
+      public static ArrayList<Recipe> sortAlpha2(ArrayList<Recipe> recipeStorage) {
+        ArrayList<Recipe> list = new ArrayList<>();
+        for (int i = 0; i < recipeStorage.size(); i++) {
+            Recipe recipe = recipeStorage.get(i);
+            list.add(recipe);
+        }
+
+        Collections.sort(list, new Comparator<Recipe>() {
+            public int compare(Recipe t1, Recipe t2) {
+                String s1 = t1.getTitle();
+                String s2 = t2.getTitle();
+                for (int i = 0; i < Math.min(s1.length(), s2.length()); i++) {
+                    if (s1.charAt(i) == s2.charAt(i)) {
+                        continue;
+                    } else if (s1.charAt(i) < s2.charAt(i)) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                }
+                if (s1.length() < s2.length()) {
+                    return 1;
+                } else if (s1.length() > s2.length()) {
                     return -1;
                 }
                 return 0;
