@@ -54,13 +54,16 @@ public class ClientController {
         String password = view2.getLoginWindowBody().getPassword();
 
         String response = model.performRequest("POST", username, password, "NULL_RECIPE", "login");
-        
+        System.out.println(response);
+        System.out.println(response);
+        System.out.println(response);
         Stage stage = view2.getLoginWindowBody().getPrimaryStage();
         Scene scene = view2.getLoginWindowBody().getTargetScene();
         this.userSession = view2.getLoginWindowBody().getUserSession();
         RecipeList recipeList = view2.getLoginWindowBody().getRecipeList();
         this.recipeStorage = view2.getLoginWindowBody().getRecipeStorage();
-        if (response == "a") {
+        System.out.println(response == "a");
+        if (response.equals("a")) {
             stage.setScene(scene);
             this.userSession.setUsername(username);
             MongoDBClient mongoClient = new MongoDBClient(this.userSession.getUsername());
@@ -69,10 +72,9 @@ public class ClientController {
             } catch (Exception err) {
                 
             }
-
-        } else if (response == "b") {
+        } else if (response.equals("a")) {
             view2.getLoginWindowBody().showAlert("Login Error", "Password Incorrect");
-        } else if (response == "c") {
+        } else if (response.equals("a")) {
             view2.getLoginWindowBody().showAlert("Login Error", "User Unknown");
         } else{
             view2.getLoginWindowBody().showAlert("Alert", "Server unavailiable right now");
