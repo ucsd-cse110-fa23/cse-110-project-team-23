@@ -4,3 +4,5 @@ PantryPal team 23
 2.Once this is done open the terminal and make sure you are in cse-110-project-team-23.
 3.Run MyServer.java to get the server started
 4.If you are in cse-110-project-team-23 and in main directory, then in the terminal type ./gradlew run which will run the project for you.
+Link to repo:
+https://github.com/ucsd-cse110-fa23/cse-110-project-team-23
