@@ -1,24 +1,21 @@
 package project;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.ArrayList;
+
+import org.json.JSONObject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javafx.application.Platform;
-import javafx.scene.control.TextField;
+import project.Client.MainWindow.MainWindowHeader;
 import project.Database.MockUserAuthentication;
 import project.Server.ChatAPI;
 import project.Server.MockChatAPI;
 import project.Server.Recipe;
-
-import static org.junit.jupiter.api.Assertions.*;
-import project.Client.MainWindow.MainWindow;
-import project.Client.MainWindow.MainWindowHeader;
-import org.json.JSONObject;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 public class PantryPalTests {
     String title;
@@ -277,6 +274,46 @@ public class PantryPalTests {
         Recipe1.setImageURL("new_image_url");
 
         assertEquals("new_image_url", Recipe1.getImageURL());
+    }
+
+    @Test
+    void integrationTest() {
+        MockUserAuthentication mockAuth = new MockUserAuthentication("testUser", "testPassword");
+        assertTrue(mockAuth.createAccount());
+
+        MockUserAuthentication mockAuthLogin = new MockUserAuthentication("mockUser", "mockPassword");
+        assertEquals(1, mockAuthLogin.login());
+
+        Recipe recipe1 = new Recipe("Chicken", "Cooked chicken", "Dinner", "");
+        Recipe recipe2 = new Recipe("Orange chicken", "null", "Dinner", "");
+        Recipe recipe3 = new Recipe("Apple", "raw", "Lunch", "");
+        Recipe recipe4 = new Recipe("Test Recipe", "Test description", "Breakfast", "");
+
+        PantryPal.recipeStorage = new ArrayList<>();
+        PantryPal.recipeStorage.add(recipe1);
+        PantryPal.recipeStorage.add(recipe2);
+        PantryPal.recipeStorage.add(recipe3);
+        PantryPal.recipeStorage.add(recipe4);
+
+        ArrayList<Recipe> alphaSort = MainWindowHeader.sortAlpha(PantryPal.recipeStorage);
+
+        assertEquals(recipe3, alphaSort.get(0));
+        assertEquals(recipe1, alphaSort.get(1));
+        assertEquals(recipe2, alphaSort.get(2));
+        assertEquals(recipe4, alphaSort.get(3));
+
+        ArrayList<Recipe> breakfastFilter = MainWindowHeader.FilterbyBreakfast(PantryPal.recipeStorage);
+        ArrayList<Recipe> lunchFilter = MainWindowHeader.FilterbyLunch(PantryPal.recipeStorage);
+        ArrayList<Recipe> dinnerFilter = MainWindowHeader.FilterbyDinner(PantryPal.recipeStorage);
+
+        assertTrue(breakfastFilter.contains(recipe4));
+        assertTrue(lunchFilter.contains(recipe3));
+        assertTrue(dinnerFilter.contains(recipe1));
+        assertTrue(dinnerFilter.contains(recipe2));
+        assertFalse(breakfastFilter.contains(recipe1));
+        assertFalse(lunchFilter.contains(recipe2));
+        assertFalse(dinnerFilter.contains(recipe3));
+        assertFalse(breakfastFilter.contains(recipe3));
     }
 
 }
