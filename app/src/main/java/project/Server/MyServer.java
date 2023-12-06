@@ -3,10 +3,7 @@ import com.sun.net.httpserver.*;
 
 import project.Client.CreateAccountWindow.CreateAccountWindow;
 import project.Client.CreateAccountWindow.CreateAccountWindowBody;
-import project.Server.Client.CloseHandler;
-import project.Server.Client.LoginHandler;
-import project.Server.Client.RecipeHandler;
-import project.Server.Client.UserHandler;
+import project.Server.Client.*;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -23,6 +20,7 @@ public class MyServer {
 	public static void main(String[] args) throws IOException {
 		ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
 		Map<String, List<String>> data = new HashMap<>();
+		Map<String, Map<String,String>> data1 = new HashMap<>();
 		// create a server
 		HttpServer server = HttpServer.create(new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT), 0);
 
@@ -30,7 +28,7 @@ public class MyServer {
 		server.createContext("/login", new LoginHandler());
 		server.createContext("/recipe", new RecipeHandler());
 		server.createContext("/close",new CloseHandler());
-		//server.createContext("/name" , new UserHandler(users));
+		server.createContext("/share" , new ShareHandler(data1));
 		server.setExecutor(threadPoolExecutor);
 		server.start();
 		System.out.println("Server started on port " + SERVER_PORT);

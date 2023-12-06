@@ -1,5 +1,7 @@
 package project.Client.MainWindow;
 
+import project.PantryPal;
+import project.Client.ViewWindow.ViewWindow;
 import project.Database.UserSession;
 import project.Server.Recipe;
 import javafx.scene.Scene;
@@ -23,9 +25,12 @@ import java.util.*;
  */
 public class RecipeList extends VBox {
     private UserSession userSession;
+    private ViewWindow recipeDetailsView;
 
-    public RecipeList(UserSession userSession) {
+    public RecipeList(UserSession userSession, ViewWindow recipeDetailsView) {
         this.userSession = userSession;
+        this.recipeDetailsView = recipeDetailsView;
+
         this.setSpacing(5); // sets spacing between recipes
         this.setPrefSize(1440, 560);
         this.setStyle("-fx-background-color: #F0F8FF;");
@@ -39,8 +44,9 @@ public class RecipeList extends VBox {
 
     // Adds a single recipe to the main list given the title of recipe
     public void addRecipe(String title, String imageURL) {
-        RecipeBox newRecipe = new RecipeBox( title, userSession);
+        RecipeBox newRecipe = new RecipeBox(title, recipeDetailsView, userSession);
         newRecipe.setImage(imageURL);
+      
         this.getChildren().add(0, newRecipe); // add new recipe to top of list
     }
 
@@ -50,5 +56,9 @@ public class RecipeList extends VBox {
             this.getChildren().remove(i);
         }
 
+    }
+
+    public ViewWindow getViewWindow(){
+        return this.recipeDetailsView;
     }
 }

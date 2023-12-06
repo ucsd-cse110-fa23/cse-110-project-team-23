@@ -17,6 +17,9 @@ import javax.sound.sampled.*;
 import java.io.*;
 import java.net.*;
 import org.json.*;
+
+//import com.sun.glass.ui.View;
+
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import java.util.ArrayList;
@@ -33,10 +36,11 @@ public class MainWindow extends BorderPane {
     private MainWindowHeader mainWindowHeader; // header section
     private RecipeList recipeList;
     private ScrollPane scrollPane;
+    private ViewWindow recipeDetailView;
 
-    public MainWindow(UserSession userSession) {
+    public MainWindow(UserSession userSession, ViewWindow recipeDetailView) {
         mainWindowHeader = new MainWindowHeader();
-        recipeList = new RecipeList(userSession);
+        recipeList = new RecipeList(userSession, recipeDetailView);
 
         scrollPane = new ScrollPane(recipeList);
         scrollPane.setFitToWidth(true);
@@ -62,7 +66,9 @@ public class MainWindow extends BorderPane {
         this.recipeList = recipeList;
     }
 
-     
+    public ViewWindow getViewWindow(){
+        return this.recipeDetailView;
+    }
 }
 
 

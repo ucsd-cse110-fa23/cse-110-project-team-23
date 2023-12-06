@@ -9,12 +9,16 @@ import java.net.URI;
 import java.util.*;
 
 public class ClientModel {
-    public String performRequest(String method, String username, String password, String recipes, String handler) {
+    public String performRequest(String method, String username, String password, String recipes, String query, String handler) {
         // Implement your HTTP request logic here and return the response
 
         try {
             String urlString = "http://localhost:8100/" + handler;
 
+            if (query.length() != 0) {
+                urlString += "?=" + username + "/" + query;
+            }
+            
             String response = "nothing";
             URL url = new URI(urlString).toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -22,13 +26,28 @@ public class ClientModel {
             conn.setRequestMethod(method);
             conn.setDoOutput(true);
 
-            if (method.equals("POST")) {
+            //if posting recipe to share
+            if (method.equals("POST") && query.length() != 0) {
+
+                OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
+                out.write(username + "!" + query + "@");
+                Scanner in = new Scanner(recipes);
+                while (in.hasNextLine()) {
+                    out.write(in.nextLine() + "&");
+                }
+                in.close();
+                out.flush();
+                out.close();
+
+            //if posting verification
+            } else if (method.equals("POST")) {
                 OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
                 out.write(username + "!" + password + "@");
                 out.flush();
                 out.close();
             }
             
+            //if storing recipes
             if (method.equals("PUT")){
                 OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
                 out.write(username + "%");

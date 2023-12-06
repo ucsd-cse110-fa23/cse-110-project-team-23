@@ -12,6 +12,8 @@ import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.geometry.*;
 import javax.sound.sampled.*;
 import java.io.*;
@@ -27,37 +29,39 @@ public class ViewWindow extends BorderPane {
     private TextArea descriptionTextArea;
     private RecipeViewFooter footer;
     private RecipeViewHeader header;
-
-    public ViewWindow(Recipe recipe, Scene previousScene, UserSession userSession) {
-        header = new RecipeViewHeader(recipe);
+    private UserSession userSession;
+    
+    public ViewWindow(UserSession userSession) {
+        header = new RecipeViewHeader();
         footer = new RecipeViewFooter();
+        this.userSession = userSession;
         this.setStyle("-fx-background-color: #F0F8FF;");
 
-        String recipeDescription = recipe.getDescription();
-        descriptionTextArea = new TextArea(recipeDescription);
-        descriptionTextArea.setPrefSize(400, 300);
-
-        // Return button retrieves current stage and returns to the previous scene
-        // (main)
-        footer.getReturnButton().setOnAction(e -> {
-            Stage stage = (Stage) footer.getReturnButton().getScene().getWindow();
-            double height = stage.getHeight();
-            double width = stage.getWidth();
-            boolean fullscreen = stage.isFullScreen();
-            stage.setScene(previousScene);
-            if (fullscreen == true) {
-                stage.setFullScreen(fullscreen);
-            } else {
-                stage.setHeight(height);
-                stage.setWidth(width);
-            }
-        });
+        //String recipeDescription = recipe.getDescription();
+        descriptionTextArea = new TextArea();
 
         this.setTop(header);
         this.setCenter(descriptionTextArea);
         this.setBottom(footer);
         descriptionTextArea.setPrefSize(400, 300);
+    }
 
+    public String getDescription() {
+        return descriptionTextArea.getText();
+    }
+
+    public RecipeViewHeader getRecipeViewHeader(){
+        return this.header;
+    }
+
+    public RecipeViewFooter getRecipeViewFooter(){
+        return this.footer;
+    }
+
+    public void setStuff(Recipe recipe, Scene previousScene){
+        this.header.setTitle(recipe.getTitle());
+        this.header.setImageURL(recipe.getImageURL());
+        this.descriptionTextArea.setText(recipe.getDescription());
         footer.getSaveButton().setOnAction(e -> {
             recipe.setDescription(this.getDescription());
             //MongoDBClient mongoClient = new MongoDBClient(userSession.getUsername());
@@ -66,7 +70,30 @@ public class ViewWindow extends BorderPane {
             double height = stage.getHeight();
             double width = stage.getWidth();
             boolean fullscreen = stage.isFullScreen();
-            stage.setScene(previousScene);
+            try {
+                stage.setScene(previousScene);
+            } catch (Exception ex) {
+
+            }
+            if (fullscreen == true) {
+                stage.setFullScreen(fullscreen);
+            } else {
+                stage.setHeight(height);
+                stage.setWidth(width);
+            }
+        });
+
+        footer.getReturnButton().setOnAction(e -> {
+            Stage stage = (Stage) footer.getReturnButton().getScene().getWindow();
+            double height = stage.getHeight();
+            double width = stage.getWidth();
+            boolean fullscreen = stage.isFullScreen();
+            try {
+                stage.setScene(previousScene);
+            } catch (Exception ex) {
+
+            }
+            
             if (fullscreen == true) {
                 stage.setFullScreen(fullscreen);
             } else {
@@ -76,7 +103,19 @@ public class ViewWindow extends BorderPane {
         });
     }
 
-    public String getDescription() {
-        return descriptionTextArea.getText();
+    public void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+
+        final Clipboard clipboard = Clipboard.getSystemClipboard();
+        final ClipboardContent c = new ClipboardContent();
+        c.putString(content);
+        clipboard.setContent(c);
+    }
+    public UserSession getUserSession(){
+        return this.userSession;
     }
 }
