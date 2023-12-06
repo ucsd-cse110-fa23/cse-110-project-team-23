@@ -41,7 +41,8 @@ class RecipeBox extends HBox {
         // Set recipe appearance
         this.title = new Button();
         this.title.setPrefSize(800, 100);
-        this.title.setText(title);
+        String mealType = getRecipeByTitle(title).getMealType();
+        this.title.setText(mealType + ": " + title);
 
         this.recipeImage = new ImageView();
         this.recipeImage.setFitWidth(100);
@@ -65,8 +66,8 @@ class RecipeBox extends HBox {
             } catch (NullPointerException error) {
             }
 
-            //MongoDBClient mongoClient = new MongoDBClient(userSession.getUsername());
-            //mongoClient.deleteRecipe(title);
+            // MongoDBClient mongoClient = new MongoDBClient(userSession.getUsername());
+            // mongoClient.deleteRecipe(title);
         });
         // adds the delete button
         this.getChildren().add(this.deleteButton);
