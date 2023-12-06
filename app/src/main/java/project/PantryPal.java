@@ -13,6 +13,7 @@ import project.Client.MainWindow.RecipeList;
 import project.Client.OpenAppWindow.OpenAppWindow;
 import project.Client.SuggestWindow.SuggestWindow;
 import project.Client.SuggestWindow.SuggestWindowBody;
+import project.Client.ViewWindow.ViewWindow;
 import project.Server.Client.*;
 import project.Database.MongoDBClient;
 import project.Database.UserSession;
@@ -52,8 +53,11 @@ public class PantryPal extends Application {
         recipeStorage = new ArrayList<Recipe>();
         // File storageCSV = new File("recipes.csv");
 
+
+        ViewWindow recipeDetailsView = new ViewWindow(userSession);
+
         // Setting the layout of the MainWindow
-        mainWindow = new MainWindow(userSession);
+        mainWindow = new MainWindow(userSession, recipeDetailsView);
         Scene mainScene = new Scene(mainWindow, 800, 400);
 
         // Setting OpenAppWindow
@@ -69,10 +73,8 @@ public class PantryPal extends Application {
         CreateAccountWindow createAccountWindow = new CreateAccountWindow(primaryStage, loginScene);
         Scene createAccountScene = new Scene(createAccountWindow, 800, 400);
 
-
-
         ClientModel clientModel = new ClientModel();
-        ClientController cc = new ClientController(createAccountWindow, loginWindow, primaryStage, clientModel);
+        ClientController cc = new ClientController(createAccountWindow, loginWindow, recipeDetailsView, primaryStage, clientModel);
 
         // Setting the layout of the AddWindow
         AddWindow addWindow = new AddWindow();

@@ -24,9 +24,9 @@ public class RecipeViewHeader extends HBox {
     private Text titleText;
     private ImageView recipeImageView;
 
-    public RecipeViewHeader(Recipe recipe) {
+    public RecipeViewHeader() {
         // Create and set the recipe title
-        titleText = new Text(recipe.getTitle());
+        titleText = new Text();
         titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
 
         // Create and set the recipe image space
@@ -36,9 +36,24 @@ public class RecipeViewHeader extends HBox {
         recipeImageView.setPreserveRatio(true); // Preserve the image's aspect ratio
 
         // Fetch the image URL from the recipe
-        String imageURL = recipe.getImageURL();
 
         // Check if imageURL is not null or empty before attempting to load the image
+
+        // Add the title and image to the header
+        this.getChildren().addAll(titleText, recipeImageView);
+        this.setSpacing(10);
+        this.setPadding(new Insets(10));
+    }
+    
+    public String getTitle() {
+        return this.titleText.getText();
+    }
+
+    public void setTitle(String title){
+        this.titleText.setText(title);
+    }
+
+    public void setImageURL(String imageURL) {
         if (imageURL != null && !imageURL.isEmpty()) {
             try {
                 Image image = new Image(imageURL);
@@ -47,10 +62,5 @@ public class RecipeViewHeader extends HBox {
                 e.printStackTrace();
             }
         }
-
-        // Add the title and image to the header
-        this.getChildren().addAll(titleText, recipeImageView);
-        this.setSpacing(10);
-        this.setPadding(new Insets(10));
     }
 }

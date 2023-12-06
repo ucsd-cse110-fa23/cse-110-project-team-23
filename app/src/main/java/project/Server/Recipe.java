@@ -1,5 +1,7 @@
 package project.Server;
 
+import javafx.scene.control.Alert;
+
 public class Recipe {
     private String title;
     private String description;
@@ -51,4 +53,13 @@ public class Recipe {
     public String toString() {
         return this.getTitle() + "!" + this.getDescription() + "@" + this.getMealType() + "$" + "FakeURL" + "#";
     }
+
+    public void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+    
 }

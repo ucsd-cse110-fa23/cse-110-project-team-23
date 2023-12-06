@@ -139,7 +139,7 @@ public class MainWindowHeader extends HBox {
 
     private void updateRecipeList(ArrayList<Recipe> list, RecipeList recipelist) {
         for (Recipe recipe : list) {
-            RecipeBox recipeBox = new RecipeBox(recipe.getTitle(), null);
+            RecipeBox recipeBox = new RecipeBox(recipe.getTitle(), recipelist.getViewWindow(), null);
             recipeBox.setImage(recipe.getImageURL());
             recipelist.getChildren().add(recipeBox);
         }

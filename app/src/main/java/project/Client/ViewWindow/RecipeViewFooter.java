@@ -2,6 +2,8 @@ package project.Client.ViewWindow;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import project.Database.MongoDBClient;
 import project.Database.UserSession;
@@ -24,6 +26,7 @@ import java.util.*;
 public class RecipeViewFooter extends HBox {
     private Button saveButton;
     private Button returnButton;
+    private Button shareButton;
 
     public RecipeViewFooter() {
         this.setStyle("-fx-background-color: #F0F8FF;");
@@ -33,8 +36,11 @@ public class RecipeViewFooter extends HBox {
 
         returnButton = new Button();
         returnButton.setText("Return");
+        
+        this.shareButton = new Button();
+        shareButton.setText("Share");
 
-        this.getChildren().addAll(saveButton, returnButton);
+        this.getChildren().addAll(saveButton, shareButton, returnButton);
     }
 
     public Button getSaveButton() {
@@ -45,4 +51,11 @@ public class RecipeViewFooter extends HBox {
         return returnButton;
     }
 
+    public Button getShareButton(){
+        return shareButton;
+    }
+
+    public void shareButtonAction(EventHandler<ActionEvent> eventHandler) {
+        this.shareButton.setOnAction(eventHandler);
+    }
 }

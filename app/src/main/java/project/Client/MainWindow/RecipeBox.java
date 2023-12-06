@@ -21,6 +21,9 @@ import java.net.*;
 import org.json.*;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,15 +32,17 @@ import java.util.*;
 /**
  * A Recipe in RecipeList (App display)
  */
-class RecipeBox extends HBox {
+public class RecipeBox extends HBox {
     private Button title;
     private String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
     private ImageView recipeImage;
     private Button deleteButton;
+    private Button shareButton;
+    private ViewWindow recipesDetailView;
 
-    RecipeBox(String title, UserSession userSession) {
+    public RecipeBox(String title, ViewWindow recipesDetailView, UserSession userSession) {
         // this.setPrefSize(1140, 50);
-
+        this.recipesDetailView = recipesDetailView;
         // Set recipe appearance
         this.title = new Button();
         this.title.setPrefSize(800, 100);
@@ -51,6 +56,8 @@ class RecipeBox extends HBox {
         this.title.setStyle(defaultButtonStyle);
         this.getChildren().add(this.title);
 
+
+        
         // Set up delete button apperance
         this.deleteButton = new Button("delete");
         this.deleteButton.setPrefSize(350, 100);
@@ -75,8 +82,13 @@ class RecipeBox extends HBox {
         this.title.setOnAction(e -> {
             Recipe recipe = getRecipeByTitle(this.title.getText());
             if (recipe != null) {
-                ViewWindow recipeDetailsView = new ViewWindow(recipe, this.title.getScene(), userSession);
-                Scene recipeDetailsScene = new Scene(recipeDetailsView, 500, 400);
+                this.recipesDetailView.setStuff(recipe, this.title.getScene());
+                Scene recipeDetailsScene;
+                try {
+                    recipeDetailsScene = new Scene(this.recipesDetailView, 500, 400);
+                } catch (Exception ex) {
+                    recipeDetailsScene = this.recipesDetailView.getScene();
+                }
                 Stage stage = (Stage) this.getScene().getWindow();
                 double height = stage.getHeight();
                 double width = stage.getWidth();
@@ -117,5 +129,4 @@ class RecipeBox extends HBox {
             e.printStackTrace();
         }
     }
-
 }
