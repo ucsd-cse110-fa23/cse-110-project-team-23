@@ -179,13 +179,13 @@ public class PantryPalTests {
     public void testLoginSuccessful() {
         MockUserAuthentication mockAuth = new MockUserAuthentication(MockUserAuthentication.MOCK_USERNAME,
                 MockUserAuthentication.MOCK_PASSWORD);
-        assertEquals(1, mockAuth.login());
+        assertEquals("a", mockAuth.login());
     }
 
     @Test
     public void testLoginFailed() {
         MockUserAuthentication mockAuth = new MockUserAuthentication("wrongUser", "wrongPassword");
-        assertEquals(3, mockAuth.login());
+        assertEquals("c", mockAuth.login());
     }
 
     @Test
@@ -282,7 +282,7 @@ public class PantryPalTests {
         assertTrue(mockAuth.createAccount());
 
         MockUserAuthentication mockAuthLogin = new MockUserAuthentication("mockUser", "mockPassword");
-        assertEquals(1, mockAuthLogin.login());
+        assertEquals("a", mockAuthLogin.login());
 
         Recipe recipe1 = new Recipe("Chicken", "Cooked chicken", "Dinner", "");
         Recipe recipe2 = new Recipe("Orange chicken", "null", "Dinner", "");

@@ -24,14 +24,14 @@ public class MockUserAuthentication extends UserAuthentication {
     }
 
     @Override
-    public int login() {
+    public String login() {
         // Check against the predetermined username and password pair
         if (MOCK_USERNAME.equals(username) && MOCK_PASSWORD.equals(password)) {
             System.out.println("Mock Login successful!");
-            return 1;
+            return "a";
         } else {
             System.out.println("Mock Incorrect username/password!");
-            return 3;
+            return "c";
         }
     }
 }

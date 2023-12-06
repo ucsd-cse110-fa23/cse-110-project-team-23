@@ -42,10 +42,10 @@ public class ClientController {
             Scene scene = view1.getCreateAccountBody().getTargetScene();
             stage.setScene(scene);
         } else {
-            view1.getCreateAccountBody().showAlert("Alert", "Username unavailiable");
+            view1.getCreateAccountBody().showAlert("Alert", "Server unavailiable right now");
         }
 
-        view1.getCreateAccountBody().showAlert("Response from get: ", response);
+        //view1.getCreateAccountBody().showAlert("Response from get: ", response);
         
     }
 
@@ -54,13 +54,13 @@ public class ClientController {
         String password = view2.getLoginWindowBody().getPassword();
 
         String response = model.performRequest("POST", username, password, "NULL_RECIPE", "login");
-        int canLogin = Integer.parseInt(response);
+        
         Stage stage = view2.getLoginWindowBody().getPrimaryStage();
         Scene scene = view2.getLoginWindowBody().getTargetScene();
         this.userSession = view2.getLoginWindowBody().getUserSession();
         RecipeList recipeList = view2.getLoginWindowBody().getRecipeList();
         this.recipeStorage = view2.getLoginWindowBody().getRecipeStorage();
-        if (canLogin == 1) {
+        if (response == "a") {
             stage.setScene(scene);
             this.userSession.setUsername(username);
             MongoDBClient mongoClient = new MongoDBClient(this.userSession.getUsername());
@@ -70,12 +70,13 @@ public class ClientController {
                 
             }
 
-        } else if (canLogin == 2) {
+        } else if (response == "b") {
             view2.getLoginWindowBody().showAlert("Login Error", "Password Incorrect");
-        } else if (canLogin == 3) {
+        } else if (response == "c") {
             view2.getLoginWindowBody().showAlert("Login Error", "User Unknown");
+        } else{
+            view2.getLoginWindowBody().showAlert("Alert", "Server unavailiable right now");
         }
-        view2.getLoginWindowBody().showAlert("Response: ", response);
     }
 
     private void handleClose(WindowEvent event) {

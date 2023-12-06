@@ -42,8 +42,8 @@ public class LoginHandler implements HttpHandler {
         
 
         scanner.close();
-        int canLogin = new UserAuthentication(username, password).login();
+        String canLogin = new UserAuthentication(username, password).login();
     
-        return Integer.toString(canLogin);
+        return canLogin;
     }
 }

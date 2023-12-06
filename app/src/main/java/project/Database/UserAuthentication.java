@@ -55,7 +55,7 @@ public class UserAuthentication {
         }
     }
 
-    public int login() {
+    public String login() {
 
         try (MongoClient mongoClient = MongoClients.create(uri)) {
 
@@ -72,16 +72,16 @@ public class UserAuthentication {
                     // Compare stored password with provided password
                     if (storedPassword.equals(encryptPassword(password))) {
                         System.out.println("Login successful!");
-                        return 1;
+                        return "a";
                     } else {
                         System.out.println("Incorrect password!");
-                        return 2;
+                        return "b";
                     }
                 }
             }
         }
 
-        return 3;
+        return "c";
     }
 
     private String encryptPassword(String password) {
