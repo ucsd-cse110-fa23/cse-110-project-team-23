@@ -1,11 +1,5 @@
 package project.Client.MainWindow;
 
-import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.stage.Stage;
-import project.PantryPal;
-import project.Client.ViewWindow.ViewWindow;
-import project.Database.MongoDBClient;
 import project.Database.UserSession;
 import project.Server.Recipe;
 import javafx.scene.Scene;
@@ -45,7 +39,7 @@ public class RecipeList extends VBox {
 
     // Adds a single recipe to the main list given the title of recipe
     public void addRecipe(String title, String imageURL) {
-        RecipeBox newRecipe = new RecipeBox(title, userSession);
+        RecipeBox newRecipe = new RecipeBox( title, userSession);
         newRecipe.setImage(imageURL);
         this.getChildren().add(0, newRecipe); // add new recipe to top of list
     }

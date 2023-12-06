@@ -47,4 +47,5 @@ public class CreateAccountWindow extends BorderPane {
     public CreateAccountWindowBody getCreateAccountBody() {
         return body;
     }
+    
 }

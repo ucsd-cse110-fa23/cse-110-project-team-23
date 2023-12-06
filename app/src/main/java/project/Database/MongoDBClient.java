@@ -13,12 +13,15 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.slf4j.LoggerFactory;
 
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.DeleteOptions;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.UpdateResult;
-
+import com.mongodb.client.model.DeleteOptions.*;
 import project.Client.MainWindow.RecipeList;
 import project.Server.ChatAPI;
 import project.Server.Recipe;
@@ -26,7 +29,7 @@ import project.Server.Recipe;
 public class MongoDBClient {
     private static final String uri = "mongodb://asandoval2313:tTr2Pnu0ZiQ2pJuo@ac-hfcmrm5-shard-00-00.gixdies.mongodb.net:27017,ac-hfcmrm5-shard-00-01.gixdies.mongodb.net:27017,ac-hfcmrm5-shard-00-02.gixdies.mongodb.net:27017/?ssl=true&replicaSet=atlas-dzpzxt-shard-0&authSource=admin&retryWrites=true&w=majority";
     private String username;
-
+    //private List<Recipe> recipeSt
     public MongoDBClient(String username) {
         this.username = username;
     }
@@ -42,6 +45,16 @@ public class MongoDBClient {
                     .append("description", description)
                     .append("imageURL", imageURL); // Include imageURL field
             userCollection.insertOne(recipeDoc);
+        }
+    }
+
+    public void deleteAll() {
+        try (MongoClient mongoClient = MongoClients.create(uri)) {
+            MongoDatabase pantryPal_db = mongoClient.getDatabase("Database");
+            MongoCollection<Document> userCollection = pantryPal_db.getCollection(username);
+            //DeleteOptions deleteOptions = (DeleteOptions) ((FindIterable<Document>) new DeleteOptions()).skip(1);
+            Document filter = new Document("username", new Document("$exists", false));
+            userCollection.deleteMany(filter);
         }
     }
 
@@ -77,6 +90,35 @@ public class MongoDBClient {
         }
     }
 
+    public String recipesToString() throws IOException, InterruptedException {
+        try (MongoClient mongoClient = MongoClients.create(uri)) {
+            MongoDatabase pantryPalDb = mongoClient.getDatabase("Database");
+
+            // Fetch the collection with the username
+            MongoCollection<Document> userCollection = pantryPalDb.getCollection(username);
+
+            // Fetch all documents in the collection
+            List<Document> recipes = userCollection.find().into(new ArrayList<>());
+
+            return "helloworld";
+            /*
+            String result = "";
+
+            // Iterate through documents, skipping the first one
+            for (int i = 1; i < recipes.size(); i++) {
+                Document recipeDoc = recipes.get(i);
+                String title = recipeDoc.getString("title");
+                String description = recipeDoc.getString("description");
+                String mealType = recipeDoc.getString("mealType");
+                ChatAPI instruction = new ChatAPI(title);
+                String imageURL = instruction.generateRecipeImage(title);
+                result += title + "!" + description + "@" + mealType + "#" + imageURL + "$";
+            }
+            return result;
+            */
+        }
+    }
+
     public void openRecipes(RecipeList recipeList, List<Recipe> recipeStorage)
             throws IOException, InterruptedException {
         try (MongoClient mongoClient = MongoClients.create(uri)) {
@@ -92,7 +134,13 @@ public class MongoDBClient {
             for (int i = 1; i < recipes.size(); i++) {
                 Document recipeDoc = recipes.get(i);
                 String title = recipeDoc.getString("title");
-                String description = recipeDoc.getString("description");
+                String descriptionAll = recipeDoc.getString("description");
+                String description = "";
+                while(descriptionAll.indexOf("&") != -1) {
+                    description += descriptionAll.substring(0, descriptionAll.indexOf("&")) + '\n';
+                    descriptionAll = descriptionAll.substring(descriptionAll.indexOf("&") + 1);
+                }
+                description += descriptionAll;
                 String mealType = recipeDoc.getString("mealType");
                 ChatAPI instruction = new ChatAPI(title);
                 String imageURL = instruction.generateRecipeImage(title);
